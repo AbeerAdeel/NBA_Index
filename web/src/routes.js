@@ -34,5 +34,11 @@ var routes = [
     component: Players,
     layout: "/admin"
   },
+  {
+    path: "/google.ca",
+    name: "Source Code",
+    icon: "nc-icon nc-laptop",
+    layout: "/admin"
+  },
 ];
 export default routes;

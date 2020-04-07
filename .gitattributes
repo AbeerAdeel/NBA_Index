@@ -1,0 +1,9 @@
+*.css linguist-detectable=false
+*.html linguist-detectable=false
+*.eot linguist-detectable=false
+*.ttf linguist-detectable=false
+*.scss linguist-detectable=false
+*.woff linguist-detectable=fasle 
+*.woff2 linguist-detectable=false
+*.js linguist-detectable=true
+*.py linguist-detectable=true
