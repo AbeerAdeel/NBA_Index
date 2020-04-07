@@ -1,30 +1,12 @@
-/*!
-
-=========================================================
-* Paper Dashboard React - v1.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-
-* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { Nav } from "reactstrap";
 // javascript plugin used to create scrollbars on windows
 import PerfectScrollbar from "perfect-scrollbar";
 
-import logo from "logo.svg";
-
 var ps;
+
+const s = {overflow: 'hidden'}
 
 class Sidebar extends React.Component {
   constructor(props) {
@@ -62,7 +44,7 @@ class Sidebar extends React.Component {
             className="simple-text logo-mini"
           >
             <div className="logo-img">
-              <img src={logo} alt="react-logo" />
+              <img src={require("assets/img/bball.jpg")} alt="react-logo" />
             </div>
           </a>
           <a
@@ -72,7 +54,7 @@ class Sidebar extends React.Component {
             NBA Analysis App
           </a>
         </div>
-        <div className="sidebar-wrapper" ref={this.sidebar}>
+        <div className="sidebar-wrapper" style={s} ref={this.sidebar}>
           <Nav>
             {this.props.routes.map((prop, key) => {
               return (

@@ -1,0 +1,13 @@
+{
+  "name": "nba_player_analysis_app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "run:web": "cd web && yarn start"
+  },
+  "author": "",
+  "license": "ISC"
+}
