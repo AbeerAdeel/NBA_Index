@@ -1,6 +1,11 @@
 import React from "react";
-// react plugin used to create charts
-import { Line, Pie } from "react-chartjs-2";
+import _ from 'lodash'
+import SearchBar from 'material-ui-search-bar'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import { Redirect, withRouter} from "react-router-dom";
+import {AutoComplete} from "material-ui";
+
+
 // reactstrap components
 import {
     Card,
@@ -8,36 +13,45 @@ import {
     CardBody,
     CardFooter,
     CardTitle,
-    CardImg,
     Row,
     Col,
-    InputGroup,
-    InputGroupText,
-    InputGroupAddon,
-    Input
 } from "reactstrap";
 // core components
-import {
-    dashboard24HoursPerformanceChart,
-    dashboardEmailStatisticsChart,
-    dashboardNASDAQChart
-} from "variables/charts.jsx";
+
+
 
 class Players extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            dataSource: ['Lebron James', 'Pascal Siakim', 'Kobe Bryant'],
+            value: "",
+        }
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleSubmit(value){
+        const path = `players/${value}`;
+        this.props.history.push(path);
+    }
+
     render() {
         return (
             <>
                 <div className="content">
-                    <form>
-                        <InputGroup className="no-border">
-                            <Input placeholder="Search for a player" />
-                            <InputGroupAddon addonType="append">
-                                <InputGroupText>
-                                    <i className="nc-icon nc-zoom-split" />
-                                </InputGroupText>
-                            </InputGroupAddon>
-                        </InputGroup>
-                    </form>
+                    <MuiThemeProvider>
+                        <SearchBar
+                            filter={AutoComplete.caseInsensitiveFilter}
+                            dataSource={this.state.dataSource}
+                            onChange={(value) => this.setState({ value: value })}
+                            onRequestSearch={() => this.handleSubmit(this.state.value)}
+                            style={{
+                                margin: '0',
+                                maxWidth: 1200
+                            }}
+                            placeholder="Search for a player..."
+                        />
+                    </MuiThemeProvider>
                     <br />
                     <br />
                     <br />
@@ -187,4 +201,4 @@ class Players extends React.Component {
     }
 }
 
-export default Players;
+export default withRouter(Players);
