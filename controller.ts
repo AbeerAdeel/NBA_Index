@@ -1,5 +1,5 @@
 import Player from "./models/players";
-import User from './models/user';
+
 
 export class ControllerClass {
     async getAllPlayers() {
