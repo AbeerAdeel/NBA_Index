@@ -55,6 +55,7 @@ class Dashboard extends React.Component {
         <div className="main-panel" ref={this.mainPanel}>
           <Switch>
             {routes.map((prop, key) => {
+              console.log(key, "key")
               return (
                 <Route
                   path={prop.layout + prop.path}

@@ -6,7 +6,7 @@ import PerfectScrollbar from "perfect-scrollbar";
 
 var ps;
 
-const s = {overflow: 'hidden'}
+const s = { overflow: 'hidden' }
 
 class Sidebar extends React.Component {
   constructor(props) {
@@ -57,6 +57,29 @@ class Sidebar extends React.Component {
         <div className="sidebar-wrapper" style={s} ref={this.sidebar}>
           <Nav>
             {this.props.routes.map((prop, key) => {
+              if (prop.name === 'Source Code') {
+                return (
+                  <li
+                    className={
+                      this.activeRoute(prop.path) +
+                      (prop.pro ? " active-pro" : "")
+                    }
+                    key={key}
+                  >
+                    <NavLink
+                      to={prop.layout + prop.path}
+                      className="nav-link"
+                      activeClassName="active"
+                    >
+                      {/* <i className={prop.icon} /> */}
+                      {/* <p>{prop.name}</p> */}
+                    </NavLink>
+                  </li>
+                )
+              }
+              else {
+
+              }
               return (
                 <li
                   className={

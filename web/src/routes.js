@@ -17,27 +17,21 @@
 
 */
 import Dashboard from "views/Dashboard.jsx";
-import Players from "views/Players.jsx";
+import Info from "views/Info.jsx";
 
 var routes = [
   {
     path: "/dashboard",
     name: "Home",
-    icon: "nc-icon nc-bank",
+    icon: "nc-icon nc-app",
     component: Dashboard,
     layout: "/admin"
   },
   {
     path: "/players",
-    name: "Players",
-    icon: "nc-icon nc-single-02",
-    component: Players,
-    layout: "/admin"
-  },
-  {
-    path: "/google.ca",
-    name: "Source Code",
-    icon: "nc-icon nc-laptop",
+    name: "Info",
+    icon: "nc-icon nc-paper",
+    component: Info,
     layout: "/admin"
   },
 ];
