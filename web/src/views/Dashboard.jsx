@@ -2,8 +2,9 @@ import React from "react";
 import _ from 'lodash'
 import SearchBar from 'material-ui-search-bar'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import { withRouter } from "react-router-dom";
-import {AutoComplete} from "material-ui";
+import { AutoComplete } from "material-ui";
+import { graphql } from 'react-apollo'
+import gql from 'graphql-tag'
 
 
 // reactstrap components
@@ -30,12 +31,13 @@ class Dashboard extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleSubmit(value){
+    handleSubmit(value) {
         const path = `players/${value}`;
         this.props.history.push('source');
     }
 
     render() {
+        console.log("hey", this.props.allPostsQuery.getAllPlayers);
         return (
             <>
                 <div className="content">
@@ -131,4 +133,18 @@ class Dashboard extends React.Component {
     }
 }
 
-export default withRouter(Dashboard);
+const ALL_POSTS_QUERY = gql`
+{
+    getAllPlayers {
+          id
+          Name
+        }
+    }
+`;
+
+export default graphql(ALL_POSTS_QUERY, {
+    name: 'allPostsQuery',
+    options: {
+        fetchPolicy: 'network-only',
+    },
+})(Dashboard)
