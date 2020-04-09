@@ -2,9 +2,8 @@ import { gql } from "apollo-server-express";
 
 export const typeDefs = gql`
   type Query {
-    hello: String!
-    getAllPlayers: [Player!]!
-    getCertainPlayer(Name: String!): [Player!]!
+    getAllPlayers(search: String!, limit: Int!): [Player!]!
+    getCertainPlayer(_id: ID!): [Player!]!
   }
   type Player {
     id: ID!

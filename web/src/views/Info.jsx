@@ -12,11 +12,6 @@ import {
   Col
 } from "reactstrap";
 // core components
-import {
-  dashboard24HoursPerformanceChart,
-  dashboardEmailStatisticsChart,
-  dashboardNASDAQChart
-} from "variables/charts.jsx";
 
 class Info extends React.Component {
   render() {

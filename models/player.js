@@ -2,7 +2,7 @@ import * as mongoose from "mongoose";
 
 export const Player = mongoose.model('Player',
      {
-          Name: String,
+          Name: {type: String, text: true},
           G: Number,
           PTS: Number,
           TRB: Number,

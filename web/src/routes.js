@@ -18,6 +18,7 @@
 */
 import Dashboard from "views/Dashboard.jsx";
 import Info from "views/Info.jsx";
+import Player from "views/Player.jsx";
 
 var routes = [
   {
@@ -28,11 +29,17 @@ var routes = [
     layout: "/admin"
   },
   {
-    path: "/players",
+    path: "/info",
     name: "Info",
     icon: "nc-icon nc-paper",
     component: Info,
     layout: "/admin"
   },
+  {
+    path: "/player",
+    name: "Player",
+    component: Player,
+    layout: "/admin"
+  }
 ];
 export default routes;

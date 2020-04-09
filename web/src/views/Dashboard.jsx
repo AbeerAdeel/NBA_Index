@@ -3,8 +3,8 @@ import _ from 'lodash'
 import SearchBar from 'material-ui-search-bar'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import { AutoComplete } from "material-ui";
-import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
+import { Query } from 'react-apollo'
 
 
 // reactstrap components
@@ -17,7 +17,16 @@ import {
     Row,
     Col,
 } from "reactstrap";
-// core components
+
+
+const SearchQuery = gql`
+query Player($search: String!) {
+  getAllPlayers(search: $search, limit: 10) {
+    id
+    Name
+  }
+}
+`;
 
 
 
@@ -25,34 +34,42 @@ class Dashboard extends React.Component {
     constructor() {
         super();
         this.state = {
-            dataSource: ['Lebron James', 'Pascal Siakim', 'Kobe Bryant'],
+            dataSource: [],
             value: "",
         }
         this.handleSubmit = this.handleSubmit.bind(this);
+        // this.loadData = this.loadData.bind(this);
     }
 
-    handleSubmit(value) {
-        const path = `players/${value}`;
-        this.props.history.push('source');
+    handleSubmit(value, data) {
+        const player = data.filter(x => x.Name === value);
+        const id = player[0].id
+        const path = `player/${id}`;
+        this.props.history.push(path);
     }
+
 
     render() {
-        console.log("hey", this.props.allPostsQuery.getAllPlayers);
         return (
             <>
                 <div className="content">
                     <MuiThemeProvider>
-                        <SearchBar
-                            filter={AutoComplete.caseInsensitiveFilter}
-                            dataSource={this.state.dataSource}
-                            onChange={(value) => this.setState({ value: value })}
-                            onRequestSearch={() => this.handleSubmit(this.state.value)}
-                            style={{
-                                margin: '0',
-                                maxWidth: 1200
+                        <Query query={SearchQuery} skip={this.state.value === ""} variables={{ search: this.state.value }}>
+                            {({ loading, error, data }) => {
+                                const dataSource = data && data.getAllPlayers ? data.getAllPlayers.map(x => x.Name) : []
+                                return <SearchBar
+                                    filter={AutoComplete.caseInsensitiveFilter}
+                                    dataSource={dataSource}
+                                    onChange={(value) => this.setState({ value: value })}
+                                    onRequestSearch={() => this.handleSubmit(this.state.value, data.getAllPlayers)}
+                                    style={{
+                                        margin: '0',
+                                        maxWidth: 1200
+                                    }}
+                                    placeholder="Search for a player..."
+                                />
                             }}
-                            placeholder="Search for a player..."
-                        />
+                        </Query>
                     </MuiThemeProvider>
                     <br />
                     <br />
@@ -133,18 +150,6 @@ class Dashboard extends React.Component {
     }
 }
 
-const ALL_POSTS_QUERY = gql`
-{
-    getAllPlayers {
-          id
-          Name
-        }
-    }
-`;
 
-export default graphql(ALL_POSTS_QUERY, {
-    name: 'allPostsQuery',
-    options: {
-        fetchPolicy: 'network-only',
-    },
-})(Dashboard)
+
+export default Dashboard;
