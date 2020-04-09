@@ -5,6 +5,8 @@ import { Provider } from 'react-redux'
 import App from './App';
 import rootReducer from './reducer';
 import createSagaMiddleware from 'redux-saga';
+import { ApolloProvider } from 'react-apollo';
+import client from './apollo';
 // import userSaga from 'managers/UserManager/saga';
 // import eventSaga from 'managers/EventManager/saga';
 
@@ -20,8 +22,10 @@ const store = createStore(
 // sagaMiddleware.run(eventSaga);
 
 render(
-    <Provider store={store}>
-        <App />
-    </Provider>,
+    <ApolloProvider client={client}>
+        <Provider store={store}>
+            <App />
+        </Provider>
+    </ApolloProvider>,
     document.getElementById('root')
 );
