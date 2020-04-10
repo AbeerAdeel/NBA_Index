@@ -80,6 +80,13 @@ class Player extends React.Component {
                                                     </Col>
                                                     <Col style={{ margin: "auto" }}>
                                                         <div className="numbers" style={{ textAlign: "center" }}>
+                                                            <p className="card-category">Position</p>
+                                                            <CardTitle tag="p">{playerInfo.Position}</CardTitle>
+                                                            <p />
+                                                        </div>
+                                                    </Col>
+                                                    <Col style={{ margin: "auto" }}>
+                                                        <div className="numbers" style={{ textAlign: "center" }}>
                                                             <p className="card-category">PPG</p>
                                                             <CardTitle tag="p">{playerInfo.PTS}</CardTitle>
                                                             <p />
