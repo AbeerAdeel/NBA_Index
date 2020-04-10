@@ -4,6 +4,9 @@ import numpy as np
 from bs4 import BeautifulSoup
 from scrape_tools import getSoup
 from string import ascii_lowercase
+import urllib.request
+import shutil
+import requests
 
 base_url = 'https://www.basketball-reference.com'
 letters = ascii_lowercase.replace('x', '')
@@ -46,9 +49,46 @@ def getGeneralPlayerLinks(url='https://www.basketball-reference.com/players/'):
     return all_links
 
 
+def getAllLinks(url='https://www.basketball-reference.com/players/'):
+    all_links = []
+    for letter in letters:
+        page_url = ''.join([url, letter])
+        soup = getSoup(page_url)
+        cols = [header.string for header in soup.find('thead').findAll('th')]
+        col_idx = cols.index('Player')
+        links = [th[col_idx].find('a')['href'] for th in [tr.findAll(
+            'th') for tr in soup.find('tbody').findAll('tr')]]
+        all_links.extend(links)
+    return all_links
+
+
 def generatePlayerLinks(player_links):
     for link in player_links:
         yield ''.join([base_url, link])
+
+def downloadImage(image, name):
+    response = requests.get(image, stream=True)
+    
+    file = open("images/{}".format(name), 'wb')
+    
+    response.raw.decode_content = True
+    shutil.copyfileobj(response.raw, file)
+    del response
+
+def getImageNames(links, isDownload):
+    urls = generatePlayerLinks(links)
+    for url in urls:
+        soup = getSoup(url)
+        div = soup.find('div', {'class': 'media-item'})
+        if div:
+            img = div.find('img')
+            img_name_split = str(img['src']).split("/")
+            img_name = img_name_split[len(img_name_split) - 1]
+            player_name = soup.find('h1', itemprop="name").text
+            if isDownload:
+                downloadImage(img['src'], img_name)
+                print("Downladed image", img_name)
+            yield {"Name":player_name, "imgFile": img_name}
 
 
 def getPlayerAwards(soup):
@@ -147,5 +187,3 @@ def getPlayerInfo(target, links, getActive):
             yield player_dict
             all_categories = []
             all_stats = []
-
-

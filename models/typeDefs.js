@@ -41,5 +41,6 @@ export const typeDefs = gql`
     isActive: Boolean
     Position: String
     YearEnd: Int
+    imgFile: String
   }
 `;

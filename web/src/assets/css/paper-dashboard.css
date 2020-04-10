@@ -3950,7 +3950,7 @@ License - nucleoapp.com/license/
 .card-stats .card-body {
   padding: 15px 15px 0px; }
   .card-stats .card-body .numbers {
-    text-align: right;
+    text-align: center;
     font-size: 2em; }
     .card-stats .card-body .numbers p {
       margin-bottom: 0; }

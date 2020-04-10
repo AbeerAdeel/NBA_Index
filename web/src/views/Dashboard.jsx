@@ -87,7 +87,7 @@ class Dashboard extends React.Component {
                                 <CardFooter>
                                     <hr />
                                     <div className="stats">
-                                        <a href="">View more info...</a>
+                                        <a href="player/5e891c0f90b08b93bc4a7c28">View more info...</a>
                                     </div>
                                 </CardFooter>
                             </Card>
@@ -104,7 +104,7 @@ class Dashboard extends React.Component {
                                 <CardFooter>
                                     <hr />
                                     <div className="stats">
-                                        <a href="">View more info...</a>
+                                        <a href="player/5e890efc90b08b93bc4a6b65">View more info...</a>
                                     </div>
                                 </CardFooter>
                             </Card>
@@ -121,7 +121,7 @@ class Dashboard extends React.Component {
                                 <CardFooter>
                                     <hr />
                                     <div className="stats">
-                                        <a href="">View more info...</a>
+                                        <a href="player/5e890efc90b08b93bc4a6bc4">View more info...</a>
                                     </div>
                                 </CardFooter>
                             </Card>
@@ -138,7 +138,7 @@ class Dashboard extends React.Component {
                                 <CardFooter>
                                     <hr />
                                     <div className="stats">
-                                        <a href="">View more info...</a>
+                                        <a href="player/5e891c0f90b08b93bc4a7c41">View more info...</a>
                                     </div>
                                 </CardFooter>
                             </Card>

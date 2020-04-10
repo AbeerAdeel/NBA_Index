@@ -36,4 +36,5 @@ export const Player = mongoose.model('Player',
           isActive: Boolean,
           Position: String,
           YearEnd: Number,
+          imgFile: String,
      });
