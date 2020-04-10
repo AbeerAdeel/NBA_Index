@@ -190,8 +190,6 @@ class Dashboard extends React.Component {
                         </Query>
                     </MuiThemeProvider>
                     <br />
-                    <br />
-                    <br />
                     <Row>
                         <Col md="3">
                             <Card>
