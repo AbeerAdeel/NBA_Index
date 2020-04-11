@@ -2,6 +2,7 @@
 from pymongo import MongoClient
 import scrape_data
 import pandas as pd
+import numpy as np
 
 cluster = 'mongodb+srv://aadeel:Andrew12@cluster0-frt96.mongodb.net/test?retryWrites=true&w=majority'
 client = MongoClient(cluster)
@@ -107,19 +108,23 @@ def getAllActivePlayers():
 def updateOtherData():
     df = pd.read_csv('player_data.csv')
     player_list = [{"name": row['name'], "position": row['position'],
-                    "year_ended": row["year_end"]} for index, row in df.iterrows()]
+                    "year_ended": row["year_end"], "college": row['college'], "height": row["height"], "weight": row['weight'], "birthDate": row['birth_date']} for index, row in df.iterrows()]
     for player in player_list:
         name = player['name']
         position = player['position']
         year_end = int(player['year_ended'])
+        college = player['college']
+        height = player['height']
+        weight = player['weight']
+        birthDate = player['birthDate']
         print(name, position, year_end)
         collection.update(
-            {"Name": name}, {"$set": {"Position": position, "Year Ended": year_end}})
+            {"Name": name}, {"$set": {"Position": position, "YearEnded": year_end, "College": college, "Height": height, "Weight": weight, "birthDate": birthDate}})
 
 
 def renameFields():
     collection.update_many({}, {"$rename": {'FG%': 'FG', 'FG3%': 'FG3', 'FT%': 'FT', 'eFG%': 'eFG', 'All Star': 'AS', 'ABA Champ': 'ABAChamp', 'BAA Champ': 'BAAChamp', 'ABA All Time': 'ABAAllTime', 'All-ABA': 'AllABA', 'All-BAA': 'AllBAA', 'Scoring Champ': 'ScoringChamp',
-                                            'BLK Champ': 'BLKChamp', 'STL Champ': 'STLChamp', 'AST Champ': 'ASTChamp', 'NBA Champ': 'NBAChamp', 'All-NBA': 'AllNBA', 'All-Defensive': 'AllDefensive', 'All-Rookie': 'AllRookie', 'AS MVP': 'ASMVP', 'Def POY': 'DefPOY', 'Finals MVP': 'FinalsMVP', 'Year Ended': 'YearEnd'}})
+                                            'BLK Champ': 'BLKChamp', 'STL Champ': 'STLChamp', 'AST Champ': 'ASTChamp', 'NBA Champ': 'NBAChamp', 'All-NBA': 'AllNBA', 'All-Defensive': 'AllDefensive', 'All-Rookie': 'AllRookie', 'AS MVP': 'ASMVP', 'Def POY': 'DefPOY', 'Finals MVP': 'FinalsMVP', 'Year Ended': 'YearEnd', 'TRB Champ': 'TRBChamp', 'Most Improved': 'MostImproved', 'Sixth Man': "SixthMan"}})
 
 
 def createIndexes():
@@ -132,6 +137,3 @@ def uploadImageNames():
         imgFile = i['imgFile']
         collection.update(
             {"Name": name}, {"$set": {"imgFile": imgFile}})
-
-
-uploadImageNames()

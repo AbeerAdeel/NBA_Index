@@ -30,10 +30,11 @@ export const typeDefs = gql`
     ASTChamp: Int
     NBAChamp: Int
     AllNBA: Int
+    TRBChamp: Int
     AllDefensive: Int
     AllRookie: Int
     ASMVP: Int
-    DefPoy: Int
+    DefPOY: Int
     FinalsMVP: Int
     MVP: Int
     ROY: Int
@@ -42,5 +43,10 @@ export const typeDefs = gql`
     Position: String
     YearEnd: Int
     imgFile: String
+    MostImproved: Int
+    Weight: Int
+    Height: String
+    birthDate: String
+    College: String
   }
 `;
