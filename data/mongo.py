@@ -8,10 +8,11 @@ cluster = 'mongodb+srv://aadeel:Andrew12@cluster0-frt96.mongodb.net/test?retryWr
 client = MongoClient(cluster)
 db = client['NBA_Dataset']
 collection = db['players']
+stats_collection = db['stats']
 
 
 # Uploads scraped data to Mongo
-def uploadData(data):
+def uploadData(data, collection):
     collection.insert_many(list(data))
     print("Sucessfully uploaded data to Mongo")
 
@@ -29,15 +30,15 @@ def updateTargets():
 
 def uploadAllData():
     uploadData(scrape_data.getPlayerInfo(
-        'HOF', scrape_data.getHOFPlayerLinks(), False))
+        'HOF', scrape_data.getHOFPlayerLinks(), False), collection)
     uploadData(scrape_data.getPlayerInfo(
-        'NA', scrape_data.getAllStarLinks(), False))
+        'NA', scrape_data.getAllStarLinks(), False), collection)
     uploadData(scrape_data.getPlayerInfo(
-        'NA', scrape_data.getGeneralPlayerLinks(), False))
+        'NA', scrape_data.getGeneralPlayerLinks(), False), collection)
     uploadData(scrape_data.getPlayerInfo(
-        'NA', scrape_data.getAllStarLinks(), True))
+        'NA', scrape_data.getAllStarLinks(), True), collection)
     uploadData(scrape_data.getPlayerInfo(
-        'NA', scrape_data.getGeneralPlayerLinks(), True))
+        'NA', scrape_data.getGeneralPlayerLinks(), True), collection)
 
 
 def updateNonHOF():
@@ -137,3 +138,50 @@ def uploadImageNames():
         imgFile = i['imgFile']
         collection.update(
             {"Name": name}, {"$set": {"imgFile": imgFile}})
+
+def get_duplicate_cols(df: pd.DataFrame) -> pd.Series:
+    return pd.Series(df.columns).value_counts()[lambda x: x>1]
+
+def uploadNonCurrentStats():
+    calculated_columns = ['MP', 'PER', 'WS', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PTS']
+    all_columns = ['Name', 'Year', 'Team', 'G', 'GS', 'FGP', '3PP', 'eFG', 'FTP', 'MP', 'PER', 'WS', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PTS']
+    
+    df = pd.read_csv('Seasons_Stats.csv').rename(columns={'Player': 'Name', 'Tm': 'Team', 'FG%': 'FGP', '3P%': '3PP', 'eFG%': 'eFG', 'FT%': 'FTP'})
+    df[['Name']] = df[['Name']].fillna(value='NA')
+    df = df.fillna(0)
+    names = list(df['Name'])
+    cleaned_names = [i.replace('*', '') for i in names if type(i) is str ]
+    df['Name'] = cleaned_names
+    query = collection.find({"isActive": False})
+
+
+    for index, row in df.iterrows():
+        for column in calculated_columns:
+            lst = []
+            if row['G'] != 0.0:
+                df.at[index,column] = float(row[column] / row['G'])
+            else:
+                df.at[index,column] = 0
+        for column in ['FGP', '3PP', 'FTP', 'eFG']:
+            df.at[index, column] = float(row[column]) * 100
+    df = df.round(1)
+    
+    
+    data = [i['Name'] for i in query]
+    update_data = []
+    all_data = []
+    for i in data:
+        update_data = []
+        update_data.append(i)
+        current_df = df[df['Name'] == i]
+        for j in range(1, len(all_columns)):
+            column = all_columns[j]
+            lst = list(current_df[column])
+            update_data.append(lst)
+        if update_data[1] != [] and update_data[2] != []:
+            all_data.append(dict(zip(all_columns, update_data)))
+        update_data = []
+    uploadData(all_data, stats_collection)
+            
+
+uploadNonCurrentStats()

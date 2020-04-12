@@ -4,6 +4,7 @@ export const typeDefs = gql`
   type Query {
     getAllPlayers(search: String!, limit: Int!): [Player!]!
     getCertainPlayer(_id: ID!): [Player!]!
+    getPlayerStats(Name: String!): [Stat!]!
   }
   type Player {
     id: ID!
@@ -48,5 +49,25 @@ export const typeDefs = gql`
     Height: String
     birthDate: String
     College: String
+  },
+  type Stat {
+    id: ID
+    Name: String!
+    Year: [Int]
+    Team: [String]
+    G: [Int]
+    GS: [Int]
+    FGP: [Float]
+    eFG: [Float]
+    FTP: [Float]
+    MP: [Float]
+    PER: [Float]
+    WS: [Float]
+    TRB: [Float]
+    AST: [Float]
+    STL: [Float]
+    BLK: [Float]
+    TOV: [Float]
+    PTS: [Float]
   }
 `;

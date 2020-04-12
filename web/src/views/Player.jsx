@@ -89,27 +89,27 @@ class Player extends React.Component {
 
     getToolTipText(target) {
         if (target === 'Once in a Generation') {
-            return "This player is part of the mount rushmore of NBA history. When you think of the greatest to ever play, this player comes up more than often.";
+            return "This player is part of the mount rushmore of NBA history. When you think of the greatest players to ever play, this player comes up more than often.";
         }
         else if (target === 'All Time Great') {
-            return "This player is one of the best at its position and currently is or a potential Hall of Famer.";
+            return "This player is one of the best at its position and currently is or will be a Hall of Famer.";
         }
         else if (target === 'All Star') {
             return "This player is consistently an All Star or a potential All Star through out his career.";
         }
         else if (target === 'Quality Starter') {
-            return "This player is consitenlty a productive starter through his career."
+            return "This player has been consitenlty a productive starter through his career."
         }
         else if (target === 'Role Player') {
-            return "This player is a solid contributer to his team throughout his career.";
+            return "This player has been a solid contributer to his team throughout his career.";
         }
         else if (target === 'Bench Player') {
-            return "This player is consitently been on the bench throughout his career.";
+            return "This player has consitently been on the bench throughout his career.";
         }
         else if (target === 'HOF') {
             return "This player is currently in the Hall of Fame but played in an era where stats and awards were a little inflated";
         }
-        return "There isn't been enough games in the current players career to make a career evaluation";
+        return "There hasn't been enough games in the current players career to make a current career evaluation";
     }
 
     render() {
