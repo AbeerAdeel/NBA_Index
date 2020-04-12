@@ -1,9 +1,7 @@
 import React from "react";
 // react plugin used to create charts
-import { Line, Pie } from "react-chartjs-2";
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
-import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import InfoIcon from '@material-ui/icons/Info';
 // reactstrap components
@@ -18,13 +16,6 @@ import {
 } from "reactstrap";
 
 import Spinner from 'react-bootstrap/Spinner';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-
-// awards = ['MVP', 'All-NBA', 'NBA Champ', 'All Star', 'All-Defensive',
-//               'Scoring Champ', 'BLK Champ', 'AST Champ', 'TRB Champ', 'STL Champ']
 
 const SearchQuery = gql`
 query CareerStats($_id: ID!) {
