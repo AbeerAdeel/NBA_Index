@@ -3,6 +3,9 @@ import React from "react";
 import { Line, Pie } from "react-chartjs-2";
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
+import Button from '@material-ui/core/Button';
+import Tooltip from '@material-ui/core/Tooltip';
+import InfoIcon from '@material-ui/icons/Info';
 // reactstrap components
 import {
     Card,
@@ -93,6 +96,31 @@ class Player extends React.Component {
         return awardsArr;
     }
 
+    getToolTipText(target) {
+        if (target === 'Once in a Generation') {
+            return "This player is part of the mount rushmore of NBA history. When you think of the greatest to ever play, this player comes up more than often.";
+        }
+        else if (target === 'All Time Great') {
+            return "This player is one of the best at its position and currently is or a potential Hall of Famer.";
+        }
+        else if (target === 'All Star') {
+            return "This player is consistently an All Star or a potential All Star through out his career.";
+        }
+        else if (target === 'Quality Starter') {
+            return "This player is consitenlty a productive starter through his career."
+        }
+        else if (target === 'Role Player') {
+            return "This player is a solid contributer to his team throughout his career.";
+        }
+        else if (target === 'Bench Player') {
+            return "This player is consitently been on the bench throughout his career.";
+        }
+        else if (target === 'HOF') {
+            return "This player is currently in the Hall of Fame but played in an era where stats and awards were a little inflated";
+        }
+        return "There isn't been enough games in the current players career to make a career evaluation";
+    }
+
     render() {
         return (
 
@@ -106,7 +134,7 @@ class Player extends React.Component {
                         }
                         const playerInfo = data.getCertainPlayer[0];
                         const awards = this.generateAwards(playerInfo);
-                        console.log(playerInfo);
+                        const toolTipText = this.getToolTipText(playerInfo.Target);
                         const img = require(`assets/img/${playerInfo.imgFile}`);
                         return (
                             <Row>
@@ -182,7 +210,7 @@ class Player extends React.Component {
                                                     <h5><li style={{ marginLeft: '-20px' }}><b>Height: </b>{playerInfo.Height}</li></h5>
                                                     <h5><li style={{ marginLeft: '-20px' }}><b>Weight: </b>{playerInfo.Weight}lb</li></h5>
                                                     <h5><li style={{ marginLeft: '-20px' }}><b>Birth Date: </b>{playerInfo.birthDate}</li></h5>
-                                                    <h5><li style={{ marginLeft: '-20px' }}><b>College: </b>{playerInfo.College}</li></h5>
+                                                    <h5><li style={{ marginLeft: '-20px' }}><b>College/HS: </b>{playerInfo.College}</li></h5>
                                                 </ul>
                                             </Row>
 
@@ -214,10 +242,9 @@ class Player extends React.Component {
                                             <CardTitle style={{ textDecoration: "underline" }} tag="h5">Career Evaluation</CardTitle>
                                         </CardHeader>
                                         <CardBody className="text-center">
-                                           
-                                                <h2><b>{playerInfo.Target}</b></h2>
-                                            
-
+                                            <h3><b>{playerInfo.Target}</b><sup><Tooltip title={toolTipText} placement="top-end" arrow>
+                                                <InfoIcon color="action" />
+                                            </Tooltip></sup></h3>
                                         </CardBody>
                                     </Card>
                                 </Col>

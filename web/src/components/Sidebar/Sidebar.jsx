@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { Nav } from "reactstrap";
 // javascript plugin used to create scrollbars on windows
 import PerfectScrollbar from "perfect-scrollbar";
+import SportsBasketballIcon from '@material-ui/icons/SportsBasketball';
 
 var ps;
 
@@ -40,18 +41,18 @@ class Sidebar extends React.Component {
       >
         <div className="logo">
           <a
-            href="https://www.creative-tim.com"
+            href="/admin/dashboard"
             className="simple-text logo-mini"
           >
             <div className="logo-img">
-              <img src={require("assets/img/bball.jpg")} alt="react-logo" />
+              <SportsBasketballIcon />
             </div>
           </a>
           <a
-            href="https://www.creative-tim.com"
+            href="/admin/dashboard"
             className="simple-text logo-normal"
           >
-            NBA Analysis App
+            NBA INDEX
           </a>
         </div>
         <div className="sidebar-wrapper" style={s} ref={this.sidebar}>
