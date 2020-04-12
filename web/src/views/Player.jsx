@@ -4,6 +4,14 @@ import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 import Tooltip from '@material-ui/core/Tooltip';
 import InfoIcon from '@material-ui/icons/Info';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+
 // reactstrap components
 import {
     Card,
@@ -17,8 +25,8 @@ import {
 
 import Spinner from 'react-bootstrap/Spinner';
 
-const SearchQuery = gql`
-query CareerStats($_id: ID!) {
+const PlayerQuery = gql`
+query Player($_id: ID!) {
   getCertainPlayer(_id: $_id) {
     id
     Name
@@ -51,19 +59,56 @@ query CareerStats($_id: ID!) {
 }
 `;
 
-class Player extends React.Component {
+const StatsQuery = gql`
+query CareerStats($Name: String!) {
+  getPlayerStats(Name: $Name) {
+    Year
+    Team
+    G
+    GS
+    FGP
+    eFG
+    FTP
+    MP
+    PER
+    WS
+    TRB
+    AST
+    STL
+    BLK
+    TOV
+    PTS
+  }
+}
+`;
 
+class Player extends React.Component {
     constructor() {
         super();
         this.state = {
             id: "",
         }
+        this.createData = this.createData.bind(this);
+    }
+
+    createData(Year, Team, G, GS, MP, PTS, AST, TRB, BLK, STL, TOV, PER, WS, FGP, FTP, eFG) {
+        return { Year, Team, G, GS, MP, PTS, AST, TRB, BLK, STL, TOV, PER, WS, FGP, FTP, eFG };
     }
 
     componentWillMount() {
         const path = window.location.pathname;
         const splitPath = path.split("/");
         this.setState({ id: splitPath[3] });
+    }
+
+    generateRows(stats) {
+        const length = stats['Year'].length;
+        const rows = [];
+        for (let index = 0; index < length; index++) {
+            const row = this.createData(stats.Year[index], stats.Team[index], stats.G[index], stats.GS[index], stats.MP[index], stats.PTS[index], stats.AST[index], stats.TRB[index], stats.BLK[index], stats.STL[index], stats.TOV[index], stats.PER[index], stats.WS[index], stats.FGP[index], stats.FTP[index], stats.eFG[index])
+            rows.push(row)
+        }
+        return rows;
     }
 
 
@@ -114,9 +159,8 @@ class Player extends React.Component {
 
     render() {
         return (
-
             <div className="content">
-                <Query query={SearchQuery} skip={this.state.id === ""} variables={{ _id: this.state.id }}>
+                <Query query={PlayerQuery} skip={this.state.id === ""} variables={{ _id: this.state.id }}>
                     {({ loading, error, data }) => {
                         if (loading) {
                             return <Spinner animation="border" role="status">
@@ -126,7 +170,8 @@ class Player extends React.Component {
                         const playerInfo = data.getCertainPlayer[0];
                         const awards = this.generateAwards(playerInfo);
                         const toolTipText = this.getToolTipText(playerInfo.Target);
-                        const img = require(`assets/img/${playerInfo.imgFile}`);
+                        const img = playerInfo.imgFile ? require(`assets/img/${playerInfo.imgFile}`) : require('assets/img/person.jpg');
+                        console.log(playerInfo);
                         return (
                             <Row>
                                 <Col xs="12">
@@ -138,7 +183,7 @@ class Player extends React.Component {
                                         <CardBody>
                                             <Row>
                                                 <Col>
-                                                    <img src={img} style={{ marginLeft: '30px' }} alt="Card image cap" />
+                                                    {<img src={img} style={{ marginLeft: '30px' }} alt="Card image cap" />}
                                                 </Col>
                                                 <Col style={{ margin: "auto" }}>
                                                     <div className="numbers" style={{ textAlign: "center" }}>
@@ -239,10 +284,84 @@ class Player extends React.Component {
                                         </CardBody>
                                     </Card>
                                 </Col>
+                                <br />
+                                {<Query query={StatsQuery} skip={playerInfo.Name === ''} variables={{ Name: playerInfo.Name }}>
+                                    {({ loading, error, data }) => {
+                                        if (loading) {
+                                            return <Spinner animation="border" role="status">
+                                                <span className="sr-only">Loading...</span>
+                                            </Spinner>
+                                        }
+                                        if (data.getPlayerStats.length === 0) {
+                                            return <div></div>;
+                                        }
+                                        const playerStats = data.getPlayerStats[0];
+                                        const rows = this.generateRows(playerStats);
+                                        
+                                        return (
+                                            <Col xs="12" style={{ marginTop: '60px' }}>
+                                                <CardTitle tag="h5">Career Stats (Per Game)</CardTitle>
+                                                <TableContainer component={Paper}>
+                                                    <Table style={{ minWidth: '650px' }} aria-label="simple table">
+                                                        <TableHead>
+                                                            <TableRow>
+                                                                <TableCell align="right">Year</TableCell>
+                                                                <TableCell align="right">Team</TableCell>
+                                                                <TableCell align="right">G</TableCell>
+                                                                <TableCell align="right">GS</TableCell>
+                                                                <TableCell align="right">MP</TableCell>
+                                                                <TableCell align="right">PTS</TableCell>
+                                                                <TableCell align="right">AST</TableCell>
+                                                                <TableCell align="right">TRB</TableCell>
+                                                                <TableCell align="right">BLK</TableCell>
+                                                                <TableCell align="right">STL</TableCell>
+                                                                <TableCell align="right">TOV</TableCell>
+                                                                <TableCell align="right">PER</TableCell>
+                                                                <TableCell align="right">WS</TableCell>
+                                                                <TableCell align="right">FG%</TableCell>
+                                                                <TableCell align="right">FT%</TableCell>
+                                                                <TableCell align="right">eFG%</TableCell>
+                                                            </TableRow>
+                                                        </TableHead>
+                                                        <TableBody>
+                                                            {rows.map((row) => (
+                                                                <TableRow key={row.name}>
+                                                                    <TableCell align="right">{row.Year}</TableCell>
+                                                                    <TableCell align="right">{row.Team}</TableCell>
+                                                                    <TableCell align="right">{row.G}</TableCell>
+                                                                    <TableCell align="right">{row.GS}</TableCell>
+                                                                    <TableCell align="right">{row.MP}</TableCell>
+                                                                    <TableCell align="right">{row.PTS}</TableCell>
+                                                                    <TableCell align="right">{row.AST}</TableCell>
+                                                                    <TableCell align="right">{row.TRB}</TableCell>
+                                                                    <TableCell align="right">{row.BLK}</TableCell>
+                                                                    <TableCell align="right">{row.STL}</TableCell>
+                                                                    <TableCell align="right">{row.TOV}</TableCell>
+                                                                    <TableCell align="right">{row.PER}</TableCell>
+                                                                    <TableCell align="right">{row.WS}</TableCell>
+                                                                    <TableCell align="right">{row.FGP}</TableCell>
+                                                                    <TableCell align="right">{row.FTP}</TableCell>
+                                                                    <TableCell align="right">{row.eFG}</TableCell>
+                                                                </TableRow>
+                                                            ))}
+                                                        </TableBody>
+                                                    </Table>
+                                                </TableContainer>
+                                            </Col>
+                                        )
+                                    }}
+                                </Query>}
                             </Row>
                         )
                     }}
                 </Query>
+                <br />
+                <br />
+                <Row>
+
+                </Row>
+
+
             </div>
         );
     }

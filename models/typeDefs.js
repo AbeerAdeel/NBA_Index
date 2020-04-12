@@ -52,7 +52,7 @@ export const typeDefs = gql`
   },
   type Stat {
     id: ID
-    Name: String!
+    Name: String
     Year: [Int]
     Team: [String]
     G: [Int]
