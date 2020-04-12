@@ -260,8 +260,16 @@ class Player extends React.Component {
                                         </CardHeader>
                                         <CardBody>
                                             <Row>
+                                                {awards.length === 0 &&
+                                                    <ul style={{ listStyleType: "none", marginTop: "-10px" }}>
+                                                        {
+                                                            <h5><li style={{ marginLeft: '-20px' }}>There are no awards for this player</li></h5>
+                                                        }
+                                                    </ul>
+                                                }
                                                 <ul style={{ listStyleType: "none", marginTop: "-10px" }}>
                                                     {
+
                                                         awards.map((item) => {
                                                             return <h5><li style={{ marginLeft: '-20px' }}>{item}</li></h5>
                                                         })
@@ -297,7 +305,7 @@ class Player extends React.Component {
                                         }
                                         const playerStats = data.getPlayerStats[0];
                                         const rows = this.generateRows(playerStats);
-                                        
+
                                         return (
                                             <Col xs="12" style={{ marginTop: '60px' }}>
                                                 <CardTitle tag="h5">Career Stats (Per Game)</CardTitle>
