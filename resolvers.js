@@ -11,6 +11,32 @@ export const resolvers = {
         },
         getPlayerStats: async (_, { Name }) => {
             return await Stats.find({ Name })
-        }
+        },
+        getSimilarPlayers: async (_, { Positions, Target, Name }) => {
+            const options = [];
+            if (Positions.length === 2) {
+                options.push(`${Positions[1]}-${Positions[0]}`);
+                options.push(`${Positions[0]}-${Positions[1]}`);
+                options.push(Positions[1]);
+                options.push(Positions[0]);
+
+                return await Player.find({
+                    $and: [
+                        { Position: { $in: options } },
+                        { Target: { $eq: Target } },
+                        { Name: { $ne: Name } }
+                    ]
+                }).limit(3);
+            }
+            const re = new RegExp(Positions[0]);
+            console.log(re);
+            return await Player.find({
+                $and: [
+                    { Position: re },
+                    { Target: { $eq: Target } },
+                    { Name: { $ne: Name } }
+                ]
+            }).limit(3);
+        },
     },
 };

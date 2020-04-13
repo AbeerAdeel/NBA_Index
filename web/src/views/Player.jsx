@@ -11,6 +11,11 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import PropTypes from 'prop-types';
+import * as playerSelectors from '../managers/selector';
+
 
 // reactstrap components
 import {
@@ -26,60 +31,70 @@ import {
 import Spinner from 'react-bootstrap/Spinner';
 
 const PlayerQuery = gql`
-query Player($_id: ID!) {
-  getCertainPlayer(_id: $_id) {
-    id
-    Name
-    PTS
-    TRB
-    AST
-    Position
-    PER
-    WS
-    imgFile
-    MVP
-    AllNBA
-    NBAChamp
-    AS
-    AllDefensive
-    ScoringChamp
-    BLKChamp
-    ASTChamp
-    TRBChamp
-    STLChamp
-    ROY
-    DefPOY
-    MostImproved
-    College
-    Weight
-    Height
-    birthDate
-    Target
-  }
-}
+    query Player($_id: ID!) {
+    getCertainPlayer(_id: $_id) {
+        id
+        Name
+        PTS
+        TRB
+        AST
+        Position
+        PER
+        WS
+        imgFile
+        MVP
+        AllNBA
+        NBAChamp
+        AS
+        AllDefensive
+        ScoringChamp
+        BLKChamp
+        ASTChamp
+        TRBChamp
+        STLChamp
+        ROY
+        DefPOY
+        MostImproved
+        College
+        Weight
+        Height
+        birthDate
+        Target
+    }
+    }
 `;
 
 const StatsQuery = gql`
-query CareerStats($Name: String!) {
-  getPlayerStats(Name: $Name) {
-    Year
-    Team
-    G
-    GS
-    FGP
-    eFG
-    FTP
-    MP
-    PER
-    WS
-    TRB
-    AST
-    STL
-    BLK
-    TOV
-    PTS
-  }
-}
+    query CareerStats($Name: String!) {
+        getPlayerStats(Name: $Name) {
+            Year
+            Team
+            G
+            GS
+            FGP
+            eFG
+            FTP
+            MP
+            PER
+            WS
+            TRB
+            AST
+            STL
+            BLK
+            TOV
+            PTS
+        }
+    }
+`;
+
+const SimilarQuery = gql`
+    query SimilarPlayers($Positions: [String]!, $Target: String!, $Name: String!) {
+        getSimilarPlayers(Positions: $Positions, Target: $Target, Name: $Name) {
+            id
+            Name
+            imgFile
+        }
+    }
 `;
 
 class Player extends React.Component {
@@ -171,7 +186,9 @@ class Player extends React.Component {
                         const awards = this.generateAwards(playerInfo);
                         const toolTipText = this.getToolTipText(playerInfo.Target);
                         const img = playerInfo.imgFile ? require(`assets/img/${playerInfo.imgFile}`) : require('assets/img/person.jpg');
-                        console.log(playerInfo);
+                        const positions = playerInfo.Position ? playerInfo.Position.split('-') : [];
+                        console.log(positions);
+
                         return (
                             <Row>
                                 <Col xs="12">
@@ -269,7 +286,6 @@ class Player extends React.Component {
                                                 }
                                                 <ul style={{ listStyleType: "none", marginTop: "-10px" }}>
                                                     {
-
                                                         awards.map((item) => {
                                                             return <h5><li style={{ marginLeft: '-20px' }}>{item}</li></h5>
                                                         })
@@ -300,7 +316,7 @@ class Player extends React.Component {
                                                 <span className="sr-only">Loading...</span>
                                             </Spinner>
                                         }
-                                        if (data.getPlayerStats.length === 0) {
+                                        if (Object.keys(playerInfo).length === 0 && playerInfo.constructor === Object) {
                                             return <div></div>;
                                         }
                                         const playerStats = data.getPlayerStats[0];
@@ -359,6 +375,46 @@ class Player extends React.Component {
                                         )
                                     }}
                                 </Query>}
+                                {<Query query={SimilarQuery} skip={playerInfo.Position === ''} variables={{ Positions: positions, Target: playerInfo.Target, Name: playerInfo.Name }}>
+                                    {({ loading, error, data }) => {
+                                        if (loading) {
+                                            return <Spinner animation="border" role="status">
+                                                <span className="sr-only">Loading...</span>
+                                            </Spinner>
+                                        }
+                                        const similarPlayers = data.getSimilarPlayers;
+                                        console.log(similarPlayers);
+
+                                        return (
+                                            <Row>
+                                                {
+                                                    similarPlayers.map((item) => {
+                                                        const colImg = require(`assets/img/${item.imgFile}`);
+                                                        return (
+                                                            <Col xs="12" sm="4" style={{ marginTop: '60px' }}>
+                                                                <Card>
+                                                                    <CardHeader>
+                                                                        <CardTitle tag="h5">{item.Name}</CardTitle>
+                                                                        <p>Tag</p>
+                                                                    </CardHeader>
+                                                                    <CardBody className="text-center">
+                                                                        <img className="center" src={colImg} alt="Card image cap" />
+                                                                    </CardBody>
+                                                                    <CardFooter>
+                                                                        <hr />
+                                                                        <div className="stats">
+                                                                            <a href={item.id}>View more info...</a>
+                                                                        </div>
+                                                                    </CardFooter>
+                                                                </Card>
+                                                            </Col>
+                                                        )
+                                                    })
+                                                }
+                                            </Row>
+                                        )
+                                    }}
+                                </Query>}
                             </Row>
                         )
                     }}
@@ -375,4 +431,13 @@ class Player extends React.Component {
     }
 }
 
-export default Player;
+const mapStateToProps = createStructuredSelector({
+    selectCurrentPlayer: playerSelectors.selectCurrentPlayer(),
+});
+
+
+Player.propTypes = {
+    selectCurrentPlayer: PropTypes.object
+};
+
+export default connect(mapStateToProps, null)(Player);
