@@ -15,6 +15,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import PropTypes from 'prop-types';
 import * as playerSelectors from '../managers/selector';
+import * as playerActions from '../managers/actions';
 
 
 // reactstrap components
@@ -92,6 +93,7 @@ const SimilarQuery = gql`
         getSimilarPlayers(Positions: $Positions, Target: $Target, Name: $Name) {
             id
             Name
+            Position
             imgFile
         }
     }
@@ -101,19 +103,14 @@ class Player extends React.Component {
     constructor() {
         super();
         this.state = {
-            id: "",
+            target: "",
+            positions: []
         }
         this.createData = this.createData.bind(this);
     }
 
     createData(Year, Team, G, GS, MP, PTS, AST, TRB, BLK, STL, TOV, PER, WS, FGP, FTP, eFG) {
         return { Year, Team, G, GS, MP, PTS, AST, TRB, BLK, STL, TOV, PER, WS, FGP, FTP, eFG };
-    }
-
-    componentWillMount() {
-        const path = window.location.pathname;
-        const splitPath = path.split("/");
-        this.setState({ id: splitPath[3] });
     }
 
     generateRows(stats) {
@@ -147,6 +144,11 @@ class Player extends React.Component {
         return awardsArr;
     }
 
+    handleOnClick(id, name, positions, target) {
+        this.props.setPlayer({ id, name, positions, target });
+        this.props.history.push('player');
+    }
+
     getToolTipText(target) {
         if (target === 'Once in a Generation') {
             return "This player is part of the mount rushmore of NBA history. When you think of the greatest players to ever play, this player comes up more than often.";
@@ -173,9 +175,10 @@ class Player extends React.Component {
     }
 
     render() {
+        console.log(this.props.selectCurrentPlayer);
         return (
             <div className="content">
-                <Query query={PlayerQuery} skip={this.state.id === ""} variables={{ _id: this.state.id }}>
+                <Query query={PlayerQuery} skip={!this.props.selectCurrentPlayer.id} variables={{ _id: this.props.selectCurrentPlayer.id }}>
                     {({ loading, error, data }) => {
                         if (loading) {
                             return <Spinner animation="border" role="status">
@@ -186,8 +189,6 @@ class Player extends React.Component {
                         const awards = this.generateAwards(playerInfo);
                         const toolTipText = this.getToolTipText(playerInfo.Target);
                         const img = playerInfo.imgFile ? require(`assets/img/${playerInfo.imgFile}`) : require('assets/img/person.jpg');
-                        const positions = playerInfo.Position ? playerInfo.Position.split('-') : [];
-                        console.log(positions);
 
                         return (
                             <Row>
@@ -308,124 +309,122 @@ class Player extends React.Component {
                                         </CardBody>
                                     </Card>
                                 </Col>
-                                <br />
-                                {<Query query={StatsQuery} skip={playerInfo.Name === ''} variables={{ Name: playerInfo.Name }}>
-                                    {({ loading, error, data }) => {
-                                        if (loading) {
-                                            return <Spinner animation="border" role="status">
-                                                <span className="sr-only">Loading...</span>
-                                            </Spinner>
-                                        }
-                                        if (Object.keys(playerInfo).length === 0 && playerInfo.constructor === Object) {
-                                            return <div></div>;
-                                        }
-                                        const playerStats = data.getPlayerStats[0];
-                                        const rows = this.generateRows(playerStats);
-
-                                        return (
-                                            <Col xs="12" style={{ marginTop: '60px' }}>
-                                                <CardTitle tag="h5">Career Stats (Per Game)</CardTitle>
-                                                <TableContainer component={Paper}>
-                                                    <Table style={{ minWidth: '650px' }} aria-label="simple table">
-                                                        <TableHead>
-                                                            <TableRow>
-                                                                <TableCell align="right">Year</TableCell>
-                                                                <TableCell align="right">Team</TableCell>
-                                                                <TableCell align="right">G</TableCell>
-                                                                <TableCell align="right">GS</TableCell>
-                                                                <TableCell align="right">MP</TableCell>
-                                                                <TableCell align="right">PTS</TableCell>
-                                                                <TableCell align="right">AST</TableCell>
-                                                                <TableCell align="right">TRB</TableCell>
-                                                                <TableCell align="right">BLK</TableCell>
-                                                                <TableCell align="right">STL</TableCell>
-                                                                <TableCell align="right">TOV</TableCell>
-                                                                <TableCell align="right">PER</TableCell>
-                                                                <TableCell align="right">WS</TableCell>
-                                                                <TableCell align="right">FG%</TableCell>
-                                                                <TableCell align="right">FT%</TableCell>
-                                                                <TableCell align="right">eFG%</TableCell>
-                                                            </TableRow>
-                                                        </TableHead>
-                                                        <TableBody>
-                                                            {rows.map((row) => (
-                                                                <TableRow key={row.name}>
-                                                                    <TableCell align="right">{row.Year}</TableCell>
-                                                                    <TableCell align="right">{row.Team}</TableCell>
-                                                                    <TableCell align="right">{row.G}</TableCell>
-                                                                    <TableCell align="right">{row.GS}</TableCell>
-                                                                    <TableCell align="right">{row.MP}</TableCell>
-                                                                    <TableCell align="right">{row.PTS}</TableCell>
-                                                                    <TableCell align="right">{row.AST}</TableCell>
-                                                                    <TableCell align="right">{row.TRB}</TableCell>
-                                                                    <TableCell align="right">{row.BLK}</TableCell>
-                                                                    <TableCell align="right">{row.STL}</TableCell>
-                                                                    <TableCell align="right">{row.TOV}</TableCell>
-                                                                    <TableCell align="right">{row.PER}</TableCell>
-                                                                    <TableCell align="right">{row.WS}</TableCell>
-                                                                    <TableCell align="right">{row.FGP}</TableCell>
-                                                                    <TableCell align="right">{row.FTP}</TableCell>
-                                                                    <TableCell align="right">{row.eFG}</TableCell>
-                                                                </TableRow>
-                                                            ))}
-                                                        </TableBody>
-                                                    </Table>
-                                                </TableContainer>
-                                            </Col>
-                                        )
-                                    }}
-                                </Query>}
-                                {<Query query={SimilarQuery} skip={playerInfo.Position === ''} variables={{ Positions: positions, Target: playerInfo.Target, Name: playerInfo.Name }}>
-                                    {({ loading, error, data }) => {
-                                        if (loading) {
-                                            return <Spinner animation="border" role="status">
-                                                <span className="sr-only">Loading...</span>
-                                            </Spinner>
-                                        }
-                                        const similarPlayers = data.getSimilarPlayers;
-                                        console.log(similarPlayers);
-
-                                        return (
-                                            <Row>
-                                                {
-                                                    similarPlayers.map((item) => {
-                                                        const colImg = require(`assets/img/${item.imgFile}`);
-                                                        return (
-                                                            <Col xs="12" sm="4" style={{ marginTop: '60px' }}>
-                                                                <Card>
-                                                                    <CardHeader>
-                                                                        <CardTitle tag="h5">{item.Name}</CardTitle>
-                                                                        <p>Tag</p>
-                                                                    </CardHeader>
-                                                                    <CardBody className="text-center">
-                                                                        <img className="center" src={colImg} alt="Card image cap" />
-                                                                    </CardBody>
-                                                                    <CardFooter>
-                                                                        <hr />
-                                                                        <div className="stats">
-                                                                            <a href={item.id}>View more info...</a>
-                                                                        </div>
-                                                                    </CardFooter>
-                                                                </Card>
-                                                            </Col>
-                                                        )
-                                                    })
-                                                }
-                                            </Row>
-                                        )
-                                    }}
-                                </Query>}
                             </Row>
+                        )
+                    }}
+                </Query>
+                <Query query={StatsQuery} skip={!this.props.selectCurrentPlayer.name} variables={{ Name: this.props.selectCurrentPlayer.name }}>
+                    {({ loading, error, data }) => {
+                        if (loading) {
+                            return <Spinner animation="border" role="status">
+                                <span className="sr-only">Loading...</span>
+                            </Spinner>
+                        }
+                        if (data.getPlayerStats.length === 0) {
+                            return <div></div>;
+                        }
+
+                        const playerStats = data.getPlayerStats[0];
+                        const rows = this.generateRows(playerStats);
+
+                        return (
+                            <Col xs="12" style={{ marginTop: '30px' }}>
+                                <CardTitle tag="h5">Career Stats (Per Game)</CardTitle>
+                                <TableContainer component={Paper}>
+                                    <Table style={{ minWidth: '650px' }} aria-label="simple table">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell align="right">Year</TableCell>
+                                                <TableCell align="right">Team</TableCell>
+                                                <TableCell align="right">G</TableCell>
+                                                <TableCell align="right">GS</TableCell>
+                                                <TableCell align="right">MP</TableCell>
+                                                <TableCell align="right">PTS</TableCell>
+                                                <TableCell align="right">AST</TableCell>
+                                                <TableCell align="right">TRB</TableCell>
+                                                <TableCell align="right">BLK</TableCell>
+                                                <TableCell align="right">STL</TableCell>
+                                                <TableCell align="right">TOV</TableCell>
+                                                <TableCell align="right">PER</TableCell>
+                                                <TableCell align="right">WS</TableCell>
+                                                <TableCell align="right">FG%</TableCell>
+                                                <TableCell align="right">FT%</TableCell>
+                                                <TableCell align="right">eFG%</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {rows.map((row) => (
+                                                <TableRow key={row.name}>
+                                                    <TableCell align="right">{row.Year}</TableCell>
+                                                    <TableCell align="right">{row.Team}</TableCell>
+                                                    <TableCell align="right">{row.G}</TableCell>
+                                                    <TableCell align="right">{row.GS}</TableCell>
+                                                    <TableCell align="right">{row.MP}</TableCell>
+                                                    <TableCell align="right">{row.PTS}</TableCell>
+                                                    <TableCell align="right">{row.AST}</TableCell>
+                                                    <TableCell align="right">{row.TRB}</TableCell>
+                                                    <TableCell align="right">{row.BLK}</TableCell>
+                                                    <TableCell align="right">{row.STL}</TableCell>
+                                                    <TableCell align="right">{row.TOV}</TableCell>
+                                                    <TableCell align="right">{row.PER}</TableCell>
+                                                    <TableCell align="right">{row.WS}</TableCell>
+                                                    <TableCell align="right">{row.FGP}</TableCell>
+                                                    <TableCell align="right">{row.FTP}</TableCell>
+                                                    <TableCell align="right">{row.eFG}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </Col>
                         )
                     }}
                 </Query>
                 <br />
                 <br />
-                <Row>
+                <Query query={SimilarQuery} variables={{ Positions: this.props.selectCurrentPlayer.positions, Target: this.props.selectCurrentPlayer.target, Name: this.props.selectCurrentPlayer.name }}>
+                    {({ loading, error, data }) => {
+                        if (loading) {
+                            return <Spinner animation="border" role="status">
+                                <span className="sr-only">Loading...</span>
+                            </Spinner>
+                        }
+                        const similarPlayers = data.getSimilarPlayers;
+                        const nCards = 12 / similarPlayers.length;
 
-                </Row>
-
-
+                        return (
+                            <Row>
+                                <Col xs="12">
+                                    <CardTitle tag="h5">Similar Players to {this.props.selectCurrentPlayer.name}</CardTitle>
+                                </Col>
+                                {
+                                    similarPlayers.map((item) => {
+                                        const colImg = item.imgFile ? require(`assets/img/${item.imgFile}`) : require('assets/img/person.jpg');
+                                        const positions = item.Position ? item.Position.split("-") : [];
+                                        return (
+                                            <Col xs="12" sm={nCards} style={{ marginTop: '0px' }}>
+                                                <Card>
+                                                    <CardHeader>
+                                                        <CardTitle tag="h5">{item.Name}</CardTitle>
+                                                    </CardHeader>
+                                                    <CardBody className="text-center">
+                                                        <img className="center" src={colImg} alt="Card image cap" />
+                                                    </CardBody>
+                                                    <CardFooter>
+                                                        <hr />
+                                                        <div className="stats">
+                                                            <a href="javascript:void(0)" onClick={() => this.handleOnClick(item.id, item.Name, positions, this.props.selectCurrentPlayer.target)}>View more info...</a>
+                                                        </div>
+                                                    </CardFooter>
+                                                </Card>
+                                            </Col>
+                                        )
+                                    })
+                                }
+                            </Row>
+                        )
+                    }}
+                </Query>
             </div>
         );
     }
@@ -435,9 +434,15 @@ const mapStateToProps = createStructuredSelector({
     selectCurrentPlayer: playerSelectors.selectCurrentPlayer(),
 });
 
+function mapDispatchToProps(dispatch) {
+    return {
+        setPlayer: (playerObj) => dispatch(playerActions.setPlayer(playerObj)),
+    };
+}
+
 
 Player.propTypes = {
     selectCurrentPlayer: PropTypes.object
 };
 
-export default connect(mapStateToProps, null)(Player);
+export default connect(mapStateToProps, mapDispatchToProps)(Player);

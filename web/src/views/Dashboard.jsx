@@ -6,7 +6,6 @@ import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 import * as playerActions from '../managers/actions';
 import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
 import PropTypes from 'prop-types';
 
 
@@ -27,6 +26,8 @@ query Player($search: String!) {
   getAllPlayers(search: $search, limit: 10) {
     id
     Name
+    Position
+    Target
   }
 }
 `;
@@ -46,9 +47,15 @@ class Dashboard extends React.Component {
         const player = data.filter(x => x.Name === value);
         const id = player[0].id;
         const name = player[0].Name;
-        this.props.setPlayer({ id, name });
-        const path = `player/${id}`;
-        this.props.history.push(path);
+        const positions = player[0].Position ? player[0].Position.split("-") : [];
+        const target = player[0].Target ? player[0].Target : "";
+        this.props.setPlayer({ id, name, positions, target });
+        this.props.history.push('player');
+    }
+
+    handleOnClick(id, name, positions, target) {
+        this.props.setPlayer({ id, name, positions, target });
+        this.props.history.push('player');
     }
 
     _handleTextFieldChange(e) {
@@ -101,7 +108,7 @@ class Dashboard extends React.Component {
                             <CardFooter>
                                 <hr />
                                 <div className="stats">
-                                    <a href="player/5e891c0f90b08b93bc4a7c28">View more info...</a>
+                                    <a href="javascript:void(0)" onClick={() => this.handleOnClick("5e891c0f90b08b93bc4a7c28", "LeBron James", ["F", "G"], "Once in a Generation")}>View more info...</a>
                                 </div>
                             </CardFooter>
                         </Card>
@@ -118,7 +125,7 @@ class Dashboard extends React.Component {
                             <CardFooter>
                                 <hr />
                                 <div className="stats">
-                                    <a href="player/5e890efc90b08b93bc4a6b65">View more info...</a>
+                                    <a href="javascript:void(0)" onClick={() => this.handleOnClick("5e890efc90b08b93bc4a6b65", "Michael Jordan", ["G", "F"], "Once in a Generation")}>View more info...</a>
                                 </div>
                             </CardFooter>
                         </Card>
@@ -135,7 +142,7 @@ class Dashboard extends React.Component {
                             <CardFooter>
                                 <hr />
                                 <div className="stats">
-                                    <a href="player/5e890efc90b08b93bc4a6bc4">View more info...</a>
+                                    <a href="javascript:void(0)" onClick={() => this.handleOnClick("5e890efc90b08b93bc4a6bc4", "Kobe Bryant", ["G", "F"], "Once in a Generation")}>View more info...</a>
                                 </div>
                             </CardFooter>
                         </Card>
@@ -152,7 +159,7 @@ class Dashboard extends React.Component {
                             <CardFooter>
                                 <hr />
                                 <div className="stats">
-                                    <a href="player/5e891c0f90b08b93bc4a7c41">View more info...</a>
+                                    <a href="javascript:void(0)" onClick={() => this.handleOnClick("5e891c0f90b08b93bc4a7c41", "Stephen Curry", ["G"], "All Time Great")}>View more info...</a>
                                 </div>
                             </CardFooter>
                         </Card>

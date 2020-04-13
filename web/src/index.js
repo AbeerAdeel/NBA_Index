@@ -8,19 +8,7 @@ import createSagaMiddleware from 'redux-saga';
 import { ApolloProvider } from 'react-apollo';
 import client from './apollo';
 import store from './store';
-// import userSaga from 'managers/UserManager/saga';
-// import eventSaga from 'managers/EventManager/saga';
 
-// const sagaMiddleware = createSagaMiddleware();
-// const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
-// const store = createStore(
-//     rootReducer,
-//     composeEnhancer(applyMiddleware(sagaMiddleware)),
-// );
-
-// // sagaMiddleware.run(userSaga);
-// // sagaMiddleware.run(eventSaga);
 
 render(
     <ApolloProvider client={client}>

@@ -26,7 +26,7 @@ export const resolvers = {
                         { Target: { $eq: Target } },
                         { Name: { $ne: Name } }
                     ]
-                }).limit(3);
+                }).limit(4);
             }
             const re = new RegExp(Positions[0]);
             console.log(re);
@@ -36,7 +36,7 @@ export const resolvers = {
                     { Target: { $eq: Target } },
                     { Name: { $ne: Name } }
                 ]
-            }).limit(3);
+            }).limit(4);
         },
     },
 };
