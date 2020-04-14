@@ -4,7 +4,7 @@ import { Stats } from './models/stats';
 export const resolvers = {
     Query: {
         getAllPlayers: async (_, { search, limit }) => {
-            return await Player.find({ $text: { $search: search } }, { score: { $meta: "textScore" } }).limit(limit).sort({ score: { $meta: "textScore" } })
+            return await Player.find({ $text: { $search: search} }, { score: { $meta: "textScore" } }).limit(limit).sort({ score: { $meta: "textScore" } })
         },
         getCertainPlayer: async (_, { _id }) => {
             return await Player.find({ _id })
@@ -24,7 +24,8 @@ export const resolvers = {
                     $and: [
                         { Position: { $in: options } },
                         { Target: { $eq: Target } },
-                        { Name: { $ne: Name } }
+                        { Name: { $ne: Name } },
+                        { imgFile: { $exists: true } }
                     ]
                 }).limit(4);
             }
@@ -34,7 +35,8 @@ export const resolvers = {
                 $and: [
                     { Position: re },
                     { Target: { $eq: Target } },
-                    { Name: { $ne: Name } }
+                    { Name: { $ne: Name } },
+                    { imgFile: { $exists: true } }
                 ]
             }).limit(4);
         },

@@ -53,6 +53,7 @@ const PlayerQuery = gql`
         ASTChamp
         TRBChamp
         STLChamp
+        SixthMan
         ROY
         DefPOY
         MostImproved
@@ -76,8 +77,7 @@ const StatsQuery = gql`
             eFG
             FTP
             MP
-            PER
-            WS
+            FG3
             TRB
             AST
             STL
@@ -109,15 +109,15 @@ class Player extends React.Component {
         this.createData = this.createData.bind(this);
     }
 
-    createData(Year, Team, G, GS, MP, PTS, AST, TRB, BLK, STL, TOV, PER, WS, FGP, FTP, eFG) {
-        return { Year, Team, G, GS, MP, PTS, AST, TRB, BLK, STL, TOV, PER, WS, FGP, FTP, eFG };
+    createData(Year, Team, G, GS, MP, PTS, AST, TRB, BLK, STL, TOV, FGP, FG3, FTP, eFG) {
+        return { Year, Team, G, GS, MP, PTS, AST, TRB, BLK, STL, TOV, FGP, FG3, FTP, eFG };
     }
 
     generateRows(stats) {
         const length = stats['Year'].length;
         const rows = [];
         for (let index = 0; index < length; index++) {
-            const row = this.createData(stats.Year[index], stats.Team[index], stats.G[index], stats.GS[index], stats.MP[index], stats.PTS[index], stats.AST[index], stats.TRB[index], stats.BLK[index], stats.STL[index], stats.TOV[index], stats.PER[index], stats.WS[index], stats.FGP[index], stats.FTP[index], stats.eFG[index])
+            const row = this.createData(stats.Year[index], stats.Team[index], stats.G[index], stats.GS[index], stats.MP[index], stats.PTS[index], stats.AST[index], stats.TRB[index], stats.BLK[index], stats.STL[index], stats.TOV[index], stats.FGP[index], stats.FG3[index], stats.FTP[index], stats.eFG[index])
             rows.push(row)
         }
         return rows;
@@ -125,8 +125,8 @@ class Player extends React.Component {
 
 
     generateAwards(playerInfo) {
-        const awardIndex = ['MVP', 'NBAChamp', 'AS', 'AllDefensive', 'ScoringChamp', 'BLKChamp', 'ASTChamp', 'TRBChamp', 'STLChamp', 'ROY', 'DefPOY', 'MostImproved'];
-        const awardCategories = ['MVP', 'NBA Champ', 'All Star', 'All Defensive', 'Scoring Champ', 'BLK Champ', 'AST Champ', 'TRB Champ', 'STL Champ', 'Rooke of the Year', 'DPOY', 'Most Improved'];
+        const awardIndex = ['MVP', 'NBAChamp', 'AS', 'AllDefensive', 'ScoringChamp', 'BLKChamp', 'ASTChamp', 'TRBChamp', 'STLChamp', 'ROY', 'DefPOY', 'MostImproved', 'SixthMan'];
+        const awardCategories = ['MVP', 'NBA Champ', 'All Star', 'All Defensive', 'Scoring Champ', 'BLK Champ', 'AST Champ', 'TRB Champ', 'STL Champ', 'Rooke of the Year', 'DPOY', 'Most Improved', 'Sixth Man'];
         const awards = awardIndex.map(x => playerInfo[x]);
         const awardsArr = [];
         const result = awards.reduce(function (result, field, index) {
@@ -331,7 +331,7 @@ class Player extends React.Component {
                             <Col xs="12" style={{ marginTop: '30px' }}>
                                 <CardTitle tag="h5">Career Stats (Per Game)</CardTitle>
                                 <TableContainer component={Paper}>
-                                    <Table style={{ minWidth: '650px' }} aria-label="simple table">
+                                    <Table style={{ minWidth: '650px', marginBottom: '15px', marginTop: '15px'}} size = "small" aria-label="simple table">
                                         <TableHead>
                                             <TableRow>
                                                 <TableCell align="right">Year</TableCell>
@@ -345,9 +345,8 @@ class Player extends React.Component {
                                                 <TableCell align="right">BLK</TableCell>
                                                 <TableCell align="right">STL</TableCell>
                                                 <TableCell align="right">TOV</TableCell>
-                                                <TableCell align="right">PER</TableCell>
-                                                <TableCell align="right">WS</TableCell>
                                                 <TableCell align="right">FG%</TableCell>
+                                                <TableCell align="right">3P%</TableCell>
                                                 <TableCell align="right">FT%</TableCell>
                                                 <TableCell align="right">eFG%</TableCell>
                                             </TableRow>
@@ -366,9 +365,8 @@ class Player extends React.Component {
                                                     <TableCell align="right">{row.BLK}</TableCell>
                                                     <TableCell align="right">{row.STL}</TableCell>
                                                     <TableCell align="right">{row.TOV}</TableCell>
-                                                    <TableCell align="right">{row.PER}</TableCell>
-                                                    <TableCell align="right">{row.WS}</TableCell>
                                                     <TableCell align="right">{row.FGP}</TableCell>
+                                                    <TableCell align="right">{row.FG3}</TableCell>
                                                     <TableCell align="right">{row.FTP}</TableCell>
                                                     <TableCell align="right">{row.eFG}</TableCell>
                                                 </TableRow>

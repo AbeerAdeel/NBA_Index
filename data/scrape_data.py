@@ -66,14 +66,16 @@ def generatePlayerLinks(player_links):
     for link in player_links:
         yield ''.join([base_url, link])
 
+
 def downloadImage(image, name):
     response = requests.get(image, stream=True)
-    
+
     file = open("images/{}".format(name), 'wb')
-    
+
     response.raw.decode_content = True
     shutil.copyfileobj(response.raw, file)
     del response
+
 
 def getImageNames(links, isDownload):
     urls = generatePlayerLinks(links)
@@ -88,7 +90,7 @@ def getImageNames(links, isDownload):
             if isDownload:
                 downloadImage(img['src'], img_name)
                 print("Downladed image", img_name)
-            yield {"Name":player_name, "imgFile": img_name}
+            yield {"Name": player_name, "imgFile": img_name}
 
 
 def getPlayerAwards(soup):
@@ -133,6 +135,42 @@ def isCurrentPlayer(soup):
         if p.text != '':
             p_count += 1
     return p_count == 2
+
+
+# def getPlayerBackground():
+#     current_rookies = list(getRookieLinks('https://www.basketball-reference.com/leagues/NBA_2020_rookies.html'))
+#     last_rookies = list(getRookieLinks('https://www.basketball-reference.com/leagues/NBA_2019_rookies.html'))
+#     current_rookies.extend(last_rookies)
+#     all_links = generatePlayerLinks(current_rookies)
+#     for link in all_links:
+#         soup = getSoup(link)
+#         div = soup.find('div', itemtype='https://schema.org/Person')
+#         p = div.findAll('p')
+#         positions = []
+#         for p_tag in p:
+#             strong = p_tag.findAll('strong')
+#             for strong_tag in strong:
+#                 if 'Position' in strong_tag.text:
+#                     if 'Guard' in p_tag.text:
+#                         positions
+            
+
+
+
+
+def getRookieLinks(url):
+    soup = getSoup(url)
+    cols = [header.string for header in soup.find('thead').findAll('th')]
+    col_idx = 10
+    # links = [th[col_idx].text for th in [tr.findAll(
+    #         'th') for tr in soup.find('tbody').findAll('tr')]]
+    # print(links)
+    for tr in soup.find('tbody').findAll('tr'):
+        for th in tr.findAll('th'):
+            player = tr.find('a')
+            if player:
+                yield player['href']
+
 
 
 def getPlayerInfo(target, links, getActive):
@@ -187,3 +225,4 @@ def getPlayerInfo(target, links, getActive):
             yield player_dict
             all_categories = []
             all_stats = []
+

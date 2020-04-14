@@ -139,49 +139,58 @@ def uploadImageNames():
         collection.update(
             {"Name": name}, {"$set": {"imgFile": imgFile}})
 
-def get_duplicate_cols(df: pd.DataFrame) -> pd.Series:
-    return pd.Series(df.columns).value_counts()[lambda x: x>1]
 
-def uploadNonCurrentStats():
-    calculated_columns = ['MP', 'PER', 'WS', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PTS']
-    all_columns = ['Name', 'Year', 'Team', 'G', 'GS', 'FGP', '3PP', 'eFG', 'FTP', 'MP', 'PER', 'WS', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PTS']
-    
-    df = pd.read_csv('Seasons_Stats.csv').rename(columns={'Player': 'Name', 'Tm': 'Team', 'FG%': 'FGP', '3P%': '3PP', 'eFG%': 'eFG', 'FT%': 'FTP'})
+def get_duplicate_cols(df: pd.DataFrame) -> pd.Series:
+    return pd.Series(df.columns).value_counts()[lambda x: x > 1]
+
+
+def updateCareerStats():
+    percent_columns = ['FTP', 'eFG', 'FG3', 'FGP']
+    all_columns = ['Name', 'Year', 'Team', 'G', 'GS', 'FGP', 'FG3',
+                   'eFG', 'FTP', 'MP', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PTS']
+
+    df = pd.read_csv('PlayerStatisticsPerGame.csv').rename(columns={
+        'Player': 'Name', 'year': 'Year', 'Tm': 'Team', 'FG%': 'FGP', '3P%': 'FG3', 'eFG%': 'eFG', 'FT%': 'FTP'})
     df[['Name']] = df[['Name']].fillna(value='NA')
     df = df.fillna(0)
     names = list(df['Name'])
-    cleaned_names = [i.replace('*', '') for i in names if type(i) is str ]
+    cleaned_names = [i.replace('*', '') for i in names if type(i) is str]
     df['Name'] = cleaned_names
-    query = collection.find({"isActive": False})
+    query = collection.find()
 
+    # for index, row in df.iterrows():
+    #     for column in calculated_columns:
+    #         lst = []
+    #         if row['G'] != 0.0:
+    #             df.at[index,column] = float(row[column] / row['G'])
+    #         else:
+    #             df.at[index,column] = 0
+    #     for column in ['FGP', '3PP', 'FTP', 'eFG']:
+    #         df.at[index, column] = float(row[column]) * 100
+    # df = df.round(1)
 
-    for index, row in df.iterrows():
-        for column in calculated_columns:
-            lst = []
-            if row['G'] != 0.0:
-                df.at[index,column] = float(row[column] / row['G'])
-            else:
-                df.at[index,column] = 0
-        for column in ['FGP', '3PP', 'FTP', 'eFG']:
-            df.at[index, column] = float(row[column]) * 100
-    df = df.round(1)
-    
-    
+    # print(df[df['Name'] == 'LeBron James'].sort_values('Year'))
+
+    for i in percent_columns:
+        df[i] = df[i] * 100
+
     data = [i['Name'] for i in query]
     update_data = []
     all_data = []
     for i in data:
         update_data = []
         update_data.append(i)
-        current_df = df[df['Name'] == i]
+        current_df = df[df['Name'] == i].sort_values('Year').round(1)
         for j in range(1, len(all_columns)):
             column = all_columns[j]
             lst = list(current_df[column])
             update_data.append(lst)
         if update_data[1] != [] and update_data[2] != []:
             all_data.append(dict(zip(all_columns, update_data)))
+            print(dict(zip(all_columns, update_data)))
         update_data = []
-    uploadData(all_data, stats_collection)
-            
 
-uploadNonCurrentStats()
+    uploadData(all_data, stats_collection)
+
+
+updateOtherData()

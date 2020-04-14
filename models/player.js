@@ -31,6 +31,7 @@ export const Player = mongoose.model('Player', {
      DefPOY: Number,
      FinalsMVP: Number,
      MostImproved: Number,
+     SixthMan: Number,
      MVP: Number,
      ROY: Number,
      Target: String,

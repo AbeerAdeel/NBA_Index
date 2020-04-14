@@ -42,6 +42,7 @@ export const typeDefs = gql`
     ROY: Int
     Target: String
     isActive: Boolean
+    SixthMan: Int
     Position: String
     YearEnd: Int
     imgFile: String
@@ -62,8 +63,7 @@ export const typeDefs = gql`
     eFG: [Float]
     FTP: [Float]
     MP: [Float]
-    PER: [Float]
-    WS: [Float]
+    FG3: [Float]
     TRB: [Float]
     AST: [Float]
     STL: [Float]
