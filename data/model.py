@@ -1,4 +1,4 @@
-from mongo import getHOFPlayers, getNonHOFPlayers, getAllActivePlayers
+from mongo import getAllNonCurrentPlayers, getAllActivePlayers
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -10,25 +10,22 @@ le = LabelEncoder()
 
 
 def getCleanDataSets():
-    hof_data = getHOFPlayers()
-    other_data = getNonHOFPlayers()
+    past_data = getAllNonCurrentPlayers()
     active_data = getAllActivePlayers()
 
-    df_hof = pd.DataFrame(hof_data)
-    df_hof['Target'] = 'NA'
-    df_non_hof = pd.DataFrame(other_data)
+    df = pd.DataFrame(past_data)
+    df['Target'] = 'NA'
     df_active = pd.DataFrame(active_data)
 
-    hof_columns = list(df_hof.columns)
-    other_columns = list(df_non_hof.columns)
+    df_columns = list(df.columns)
     active_columns = list(df_active.columns)
 
-    df_hof[hof_columns] = df_hof[hof_columns].replace({'NA': np.nan})
-    df_non_hof[other_columns] = df_non_hof[other_columns].replace({
-                                                                  'NA': np.nan})
+    df[df_columns] = df[df_columns].replace({'NA': np.nan})
     df_active[active_columns] = df_active[active_columns].replace({
                                                                   'NA': np.nan})
-    return df_hof.fillna(0), df_non_hof.fillna(0), df_active.fillna(0)
+                                                                
+    print(df)
+    return df.fillna(0), df_active.fillna(0)
 
 
 def getDataWithOutputs(df):
@@ -43,8 +40,8 @@ def getDataWithOutputs(df):
 
 
     targets = []
-    awards = ['MVP', 'All-NBA', 'NBA Champ', 'All Star', 'All-Defensive',
-              'Scoring Champ', 'BLK Champ', 'AST Champ', 'TRB Champ', 'STL Champ']
+    awards = ['MVP', 'AllNBA', 'NBAChamp', 'AS', 'AllDefensive',
+              'ScoringChamp', 'BLKChamp', 'ASTChamp', 'TRBChamp', 'STLChamp']
     for index, row in df.iterrows():
         award_count = np.sum([float(row[i]) for i in awards])
         rating = float(((row['WS'] / row['G']) * row['PER']) + award_count)
@@ -61,32 +58,25 @@ def getDataWithOutputs(df):
         elif rating < 0:
             targets.append('Bench Player')
     df['Target'] = np.array(targets)
+    print(df[df['Target'] == 'Once in a Generation'])
     return df
 
 
 def getDataframe():
-    df_hof = getDataWithOutputs(getCleanDataSets()[0])
-    df_non_hof = getDataWithOutputs(getCleanDataSets()[1])
-    df = pd.concat([df_non_hof, df_hof])
-    return df.fillna(0)
+    df = getDataWithOutputs(getCleanDataSets()[0])
+    return df
 
 
 def getInputOutput(df):
-    all_df = getDataframe()
-    remove_columns = ['isActive', 'Target', 'Name', 'Position', 'Year Ended']
-    # 'ABA Champ', 'All-ABA', 'ABA All-Time', 'All-BAA', 'All-BAA/NBA', 'BAA/NBA Champ']
-    columns = list(all_df.columns)
-    for column in remove_columns:
-        columns.remove(column)
-
-    df_columns = set(df.columns)
-
-    for column in columns:
-        if column not in df_columns:
-            df[column] = 0.0
-
+    columns = list(df.columns)
+    print(columns)
+    columns.remove('Name')
+    columns.remove('Target')
     targets = df['Target']
     values = df[columns].values
+    for i in columns:
+        if 'G' in list(df[i]):
+            print(i)
     return values, targets
 
 
@@ -94,6 +84,7 @@ def makeModel():
     values = getInputOutput(getDataframe())[0]
     targets = getInputOutput(getDataframe())[1]
 
+    print(values)
     X, y = values, targets
     X = X.astype('float32')
     y = le.fit_transform(y)
@@ -128,7 +119,7 @@ def makeModel():
 
 def getPredictions():
     model = tf.keras.models.load_model('model.h5')
-    df = getCleanDataSets()[2].fillna(0)
+    df = getCleanDataSets()[1].fillna(0)
     values = getInputOutput(df)[0].astype('float32')
     predictions = [np.argmax(i) for i in model.predict(values)]
     translate = le.inverse_transform(predictions)
@@ -141,9 +132,9 @@ def getPredictions():
     print(df[df['Target'] == 'All Time Great']['Name'])
     print('####### All Star #######')
     print(df[df['Target'] == 'All Star']['Name'])
-    print('####### Quality Starter #######')
+    print('####### Above Average Player #######')
     print(df[df['Target'] == 'Quality Starter']['Name'])
-    print('####### Role Player #######')
+    print('####### Average Player #######')
     print(df[df['Target'] == 'Role Player']['Name'])
     print('####### Bench Player #######')
     print(df[df['Target'] == 'Bench Player']['Name'])

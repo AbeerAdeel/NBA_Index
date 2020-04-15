@@ -71,29 +71,18 @@ def getAllData():
     return data
 
 
-def getHOFPlayers():
+def getAllNonCurrentPlayers():
     data = collection.find(
-        {"$and": [{"Target": {"$eq": "HOF"}}, {
-            "isActive": {"$eq": False}},
-            {"PER": {"$ne": "NA"}},
-            {"WS": {"$ne": "NA"}},
-            {"PER": {"$exists": True}},
-            {"WS": {"$exists": True}},
-            {"Year Ended": {"$gt": 1980}},
-        ]},
-        {"_id": 0}
-    )
-    return data
-
-
-def getNonHOFPlayers():
-    data = collection.find(
-        {"$and": [{"Target": {"$eq": "NA"}},
+        {"$and": [{"isActive": {"$eq": False}},
                   {"PER": {"$ne": "NA"}},
                   {"WS": {"$ne": "NA"}},
-                  {"isActive": {"$eq": False}},
+                  {"PER": {"$exists": True}},
+                  {"WS": {"$exists": True}},
+                  {"YearEnded": {"$gt": 1980}}
                   ]},
-        {"_id": 0})
+        {"_id": 0, "College": 0, "Height": 0, "Weight": 0, "birthDate": 0,
+            "imgFile": 0, "Position": 0, "ABA All-Time": 0, "AllABA": 0, "ABAChamp": 0, "isActive": 0, "YearEnded": 0, "AllBAA": 0, "BAA/NBA Champ": 0, "All-BAA/NBA": 0}
+    )
     return data
 
 
@@ -102,7 +91,8 @@ def getAllActivePlayers():
         {"$and": [{"isActive": {"$eq": True}},
                   {"G": {"$gt": 175}},
                   ]},
-        {"_id": 0})
+        {"_id": 0, "College": 0, "Height": 0, "Weight": 0, "birthDate": 0,
+            "imgFile": 0, "Position": 0, "ABA All-Time": 0, "AllABA": 0, "ABAChamp": 0, "isActive": 0, "YearEnded": 0, "AllBAA": 0, "BAA/NBA Champ": 0, "All-BAA/NBA": 0})
     return data
 
 
@@ -125,7 +115,7 @@ def updateOtherData():
 
 def renameFields():
     collection.update_many({}, {"$rename": {'FG%': 'FG', 'FG3%': 'FG3', 'FT%': 'FT', 'eFG%': 'eFG', 'All Star': 'AS', 'ABA Champ': 'ABAChamp', 'BAA Champ': 'BAAChamp', 'ABA All Time': 'ABAAllTime', 'All-ABA': 'AllABA', 'All-BAA': 'AllBAA', 'Scoring Champ': 'ScoringChamp',
-                                            'BLK Champ': 'BLKChamp', 'STL Champ': 'STLChamp', 'AST Champ': 'ASTChamp', 'NBA Champ': 'NBAChamp', 'All-NBA': 'AllNBA', 'All-Defensive': 'AllDefensive', 'All-Rookie': 'AllRookie', 'AS MVP': 'ASMVP', 'Def POY': 'DefPOY', 'Finals MVP': 'FinalsMVP', 'Year Ended': 'YearEnd', 'TRB Champ': 'TRBChamp', 'Most Improved': 'MostImproved', 'Sixth Man': "SixthMan"}})
+                                            'BLK Champ': 'BLKChamp', 'STL Champ': 'STLChamp', 'AST Champ': 'ASTChamp', 'NBA Champ': 'NBAChamp', 'All-NBA': 'AllNBA', 'All-Defensive': 'AllDefensive', 'All-Rookie': 'AllRookie', 'AS MVP': 'ASMVP', 'Def POY': 'DefPOY', 'Finals MVP': 'FinalsMVP', 'YearEnd': 'YearEnded', 'TRB Champ': 'TRBChamp', 'Most Improved': 'MostImproved', 'Sixth Man': "SixthMan"}})
 
 
 def createIndexes():
@@ -142,6 +132,10 @@ def uploadImageNames():
 
 def get_duplicate_cols(df: pd.DataFrame) -> pd.Series:
     return pd.Series(df.columns).value_counts()[lambda x: x > 1]
+
+def temp():
+    collection.update_many({"Target": "Role Player"}, {"$set": {"Target": "Average Player"}})
+    collection.update_many({"Target": "Quality Starter"}, {"$set": {"Target": "Above Average Player"}})
 
 
 def updateCareerStats():
@@ -192,5 +186,4 @@ def updateCareerStats():
 
     uploadData(all_data, stats_collection)
 
-
-updateOtherData()
+temp()
