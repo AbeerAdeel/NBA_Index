@@ -3,6 +3,8 @@ from pymongo import MongoClient
 import scrape_data
 import pandas as pd
 import numpy as np
+import unidecode
+import math
 
 cluster = 'mongodb+srv://aadeel:Andrew12@cluster0-frt96.mongodb.net/test?retryWrites=true&w=majority'
 client = MongoClient(cluster)
@@ -18,14 +20,10 @@ def uploadData(data, collection):
 
 
 def updateTargets():
-    df = pd.read_csv('current.csv')
-    player_list = [{"name": row['Name'], "target": row['Target']}
-                   for index, row in df.iterrows()]
-    for player in player_list:
-        name = player['name']
-        target = player['target']
-        print(name, target)
-        collection.update({"Name": name}, {"$set": {"Target": target}})
+    df = pd.read_csv('all_targets.csv')
+    for index, row in df.iterrows():
+        print(row['Name'], row['Target'])
+        collection.update({"Name": row['Name']}, {"$set": {"Target": row['Target']}})
 
 
 def uploadAllData():
@@ -78,21 +76,12 @@ def getAllNonCurrentPlayers():
                   {"WS": {"$ne": "NA"}},
                   {"PER": {"$exists": True}},
                   {"WS": {"$exists": True}},
-                  {"YearEnded": {"$gt": 1980}}
+                  {"YearEnded": {"$gt": 1980}},
+                  {"G": {"$gt": 200}}
                   ]},
         {"_id": 0, "College": 0, "Height": 0, "Weight": 0, "birthDate": 0,
             "imgFile": 0, "Position": 0, "ABA All-Time": 0, "AllABA": 0, "ABAChamp": 0, "isActive": 0, "YearEnded": 0, "AllBAA": 0, "BAA/NBA Champ": 0, "All-BAA/NBA": 0}
     )
-    return data
-
-
-def getAllActivePlayers():
-    data = collection.find(
-        {"$and": [{"isActive": {"$eq": True}},
-                  {"G": {"$gt": 175}},
-                  ]},
-        {"_id": 0, "College": 0, "Height": 0, "Weight": 0, "birthDate": 0,
-            "imgFile": 0, "Position": 0, "ABA All-Time": 0, "AllABA": 0, "ABAChamp": 0, "isActive": 0, "YearEnded": 0, "AllBAA": 0, "BAA/NBA Champ": 0, "All-BAA/NBA": 0})
     return data
 
 
@@ -102,15 +91,20 @@ def updateOtherData():
                     "year_ended": row["year_end"], "college": row['college'], "height": row["height"], "weight": row['weight'], "birthDate": row['birth_date']} for index, row in df.iterrows()]
     for player in player_list:
         name = player['name']
-        position = player['position']
         year_end = int(player['year_ended'])
-        college = player['college']
-        height = player['height']
-        weight = player['weight']
-        birthDate = player['birthDate']
-        print(name, position, year_end)
+        print(name, year_end)
         collection.update(
-            {"Name": name}, {"$set": {"Position": position, "YearEnded": year_end, "College": college, "Height": height, "Weight": weight, "birthDate": birthDate}})
+            {"Name": name}, {"$set": {"YearEnded": year_end}})
+
+
+def getAllActivePlayers():
+    data = collection.find(
+        {"$and": [{"isActive": {"$eq": True}},
+                  {"G": {"$gt": 200}},
+                  ]},
+        {"_id": 0, "College": 0, "Height": 0, "Weight": 0, "birthDate": 0,
+            "imgFile": 0, "Position": 0, "ABA All-Time": 0, "AllABA": 0, "ABAChamp": 0, "isActive": 0, "YearEnded": 0, "AllBAA": 0, "BAA/NBA Champ": 0, "All-BAA/NBA": 0})
+    return data
 
 
 def renameFields():
@@ -122,6 +116,7 @@ def createIndexes():
     collection.create_index("Name")
 
 
+
 def uploadImageNames():
     for i in scrape_data.getImageNames(scrape_data.getAllLinks(), False):
         name = i['Name']
@@ -130,12 +125,42 @@ def uploadImageNames():
             {"Name": name}, {"$set": {"imgFile": imgFile}})
 
 
-def get_duplicate_cols(df: pd.DataFrame) -> pd.Series:
-    return pd.Series(df.columns).value_counts()[lambda x: x > 1]
+def updateDecodeEuropeanNames():
+    data = getAllData()
+    names = [i['Name'] for i in data]
+    for name in names:
+        unaccented_string = unidecode.unidecode(name)
+        print(name, unaccented_string)
+        collection.update(
+            {'Name': name}, {"$set": {"Name": unaccented_string}})
 
-def temp():
-    collection.update_many({"Target": "Role Player"}, {"$set": {"Target": "Average Player"}})
-    collection.update_many({"Target": "Quality Starter"}, {"$set": {"Target": "Above Average Player"}})
+
+def updatePlayerInfo():
+    data = pd.DataFrame(collection.find({})).fillna('NA')
+    names = list(data['Name'])
+
+    df = pd.read_csv('all_seasons.csv')
+    heights = []
+    weights = []
+    for index, row in df.iterrows():
+        calculated_feet = str(
+            round((0.0328 * row['player_height']), 2)).split('.')
+        if len(calculated_feet[1]) == 1:
+            str_feet = calculated_feet[0] + "-" + calculated_feet[1]
+        else:
+            str_feet = calculated_feet[0] + "-" + calculated_feet[1][0]
+        usweight = int(float(row['player_weight']) * 2.2046)
+        heights.append(str_feet)
+        weights.append(usweight)
+    df['weight'] = weights
+    df['height'] = heights
+    for i in names:
+        current = df[df['player_name'] == i]
+        if len(current) > 0:
+            row = current.iloc[len(current) - 1]
+            print(i, row['height'], row['weight'], row['college'])
+            collection.update({"Name": i}, {"$set": {"Height": str(row['height']), "Weight": int(row['weight']), "College": str(
+                row['college'])}})
 
 
 def updateCareerStats():
@@ -151,19 +176,6 @@ def updateCareerStats():
     cleaned_names = [i.replace('*', '') for i in names if type(i) is str]
     df['Name'] = cleaned_names
     query = collection.find()
-
-    # for index, row in df.iterrows():
-    #     for column in calculated_columns:
-    #         lst = []
-    #         if row['G'] != 0.0:
-    #             df.at[index,column] = float(row[column] / row['G'])
-    #         else:
-    #             df.at[index,column] = 0
-    #     for column in ['FGP', '3PP', 'FTP', 'eFG']:
-    #         df.at[index, column] = float(row[column]) * 100
-    # df = df.round(1)
-
-    # print(df[df['Name'] == 'LeBron James'].sort_values('Year'))
 
     for i in percent_columns:
         df[i] = df[i] * 100
@@ -186,4 +198,21 @@ def updateCareerStats():
 
     uploadData(all_data, stats_collection)
 
-temp()
+
+def updatePositions():
+    df = pd.read_csv('PlayerStatisticsPerGame.csv').fillna("None")
+    names = [unidecode.unidecode(name) for name in df['Player']]
+    cleaned_names = [i.replace('*', '') for i in names if type(i) is str]
+    df['Player'] = cleaned_names
+    data = collection.find({})
+    names = [i['Name'] for i in data]
+    print(names)
+    for name in names:
+        current_df = df[df['Player'] == name]
+        if len(current_df) >= 1:
+            lst = list(current_df['Pos'])
+            position = max(set(lst), key=lst.count)
+            print(name, position)
+            collection.update({"Name": name}, {"$set": {"Position": position}})
+
+updatePositions()

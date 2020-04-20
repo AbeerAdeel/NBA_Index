@@ -47,14 +47,14 @@ class Dashboard extends React.Component {
         const player = data.filter(x => x.Name === value);
         const id = player[0].id;
         const name = player[0].Name;
-        const positions = player[0].Position ? player[0].Position.split("-") : [];
-        const target = player[0].Target ? player[0].Target : "";
-        this.props.setPlayer({ id, name, positions, target });
+        const position = player[0].Position;
+        const targets = player[0].Target === "Once in a Generation" ? ["Once in a Generation", "All Time Great"]: [player[0].Target];
+        this.props.setPlayer({ id, name, position, targets });
         this.props.history.push('player');
     }
 
-    handleOnClick(id, name, positions, target) {
-        this.props.setPlayer({ id, name, positions, target });
+    handleOnClick(id, name, position, targets) {
+        this.props.setPlayer({ id, name, position, targets });
         this.props.history.push('player');
     }
 
@@ -108,7 +108,7 @@ class Dashboard extends React.Component {
                             <CardFooter>
                                 <hr />
                                 <div className="stats">
-                                    <a href="javascript:void(0)" onClick={() => this.handleOnClick("5e891c0f90b08b93bc4a7c28", "LeBron James", ["F", "G"], "Once in a Generation")}>View more info...</a>
+                                    <a href="javascript:void(0)" onClick={() => this.handleOnClick("5e891c0f90b08b93bc4a7c28", "LeBron James", "SF", ["Once in a Generation", "All Time Great"])}>View more info...</a>
                                 </div>
                             </CardFooter>
                         </Card>
@@ -125,7 +125,7 @@ class Dashboard extends React.Component {
                             <CardFooter>
                                 <hr />
                                 <div className="stats">
-                                    <a href="javascript:void(0)" onClick={() => this.handleOnClick("5e890efc90b08b93bc4a6b65", "Michael Jordan", ["G", "F"], "Once in a Generation")}>View more info...</a>
+                                    <a href="javascript:void(0)" onClick={() => this.handleOnClick("5e890efc90b08b93bc4a6b65", "Michael Jordan", "SG", ["Once in a Generation", "All Time Great"])}>View more info...</a>
                                 </div>
                             </CardFooter>
                         </Card>
@@ -142,7 +142,7 @@ class Dashboard extends React.Component {
                             <CardFooter>
                                 <hr />
                                 <div className="stats">
-                                    <a href="javascript:void(0)" onClick={() => this.handleOnClick("5e890efc90b08b93bc4a6bc4", "Kobe Bryant", ["G", "F"], "Once in a Generation")}>View more info...</a>
+                                    <a href="javascript:void(0)" onClick={() => this.handleOnClick("5e890efc90b08b93bc4a6bc4", "Kobe Bryant", "SG", ["Once in a Generation", "All Time Great"])}>View more info...</a>
                                 </div>
                             </CardFooter>
                         </Card>
@@ -159,7 +159,7 @@ class Dashboard extends React.Component {
                             <CardFooter>
                                 <hr />
                                 <div className="stats">
-                                    <a href="javascript:void(0)" onClick={() => this.handleOnClick("5e891c0f90b08b93bc4a7c41", "Stephen Curry", ["G"], "All Time Great")}>View more info...</a>
+                                    <a href="javascript:void(0)" onClick={() => this.handleOnClick("5e891c0f90b08b93bc4a7c41", "Stephen Curry", "PG", ["All Time Great"])}>View more info...</a>
                                 </div>
                             </CardFooter>
                         </Card>

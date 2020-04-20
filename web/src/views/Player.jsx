@@ -89,12 +89,13 @@ const StatsQuery = gql`
 `;
 
 const SimilarQuery = gql`
-    query SimilarPlayers($Positions: [String]!, $Target: String!, $Name: String!) {
-        getSimilarPlayers(Positions: $Positions, Target: $Target, Name: $Name) {
+    query SimilarPlayers($Position: String!, $Targets: [String]!, $Name: String!) {
+        getSimilarPlayers(Position: $Position, Targets: $Targets, Name: $Name) {
             id
             Name
             Position
             imgFile
+            Target
         }
     }
 `;
@@ -144,8 +145,8 @@ class Player extends React.Component {
         return awardsArr;
     }
 
-    handleOnClick(id, name, positions, target) {
-        this.props.setPlayer({ id, name, positions, target });
+    handleOnClick(id, name, position, targets) {
+        this.props.setPlayer({ id, name, position, targets });
         this.props.history.push('player');
     }
 
@@ -380,7 +381,7 @@ class Player extends React.Component {
                 </Query>
                 <br />
                 <br />
-                <Query query={SimilarQuery} variables={{ Positions: this.props.selectCurrentPlayer.positions, Target: this.props.selectCurrentPlayer.target, Name: this.props.selectCurrentPlayer.name }}>
+                <Query query={SimilarQuery} variables={{ Position: this.props.selectCurrentPlayer.position, Targets: this.props.selectCurrentPlayer.targets, Name: this.props.selectCurrentPlayer.name }}>
                     {({ loading, error, data }) => {
                         if (loading) {
                             return <Spinner animation="border" role="status">
@@ -398,7 +399,7 @@ class Player extends React.Component {
                                 {
                                     similarPlayers.map((item) => {
                                         const colImg = item.imgFile ? require(`assets/img/${item.imgFile}`) : require('assets/img/person.jpg');
-                                        const positions = item.Position ? item.Position.split("-") : [];
+                                        const targets = item.Target === "Once in a Generation" ? ["Once in a Generation", "All Time Great"]: [item.Target];
                                         return (
                                             <Col xs="12" sm={nCards} style={{ marginTop: '0px' }}>
                                                 <Card>
@@ -411,7 +412,7 @@ class Player extends React.Component {
                                                     <CardFooter>
                                                         <hr />
                                                         <div className="stats">
-                                                            <a href="javascript:void(0)" onClick={() => this.handleOnClick(item.id, item.Name, positions, this.props.selectCurrentPlayer.target)}>View more info...</a>
+                                                            <a href="javascript:void(0)" onClick={() => this.handleOnClick(item.id, item.Name, item.Position, targets)}>View more info...</a>
                                                         </div>
                                                     </CardFooter>
                                                 </Card>
