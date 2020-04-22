@@ -43,4 +43,5 @@ export const Player = mongoose.model('Player', {
      Height: String,
      College: String,
      birthDate: String,
+     Archetype: String
 });

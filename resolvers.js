@@ -12,16 +12,17 @@ export const resolvers = {
         getPlayerStats: async (_, { Name }) => {
             return await Stats.find({ Name })
         },
-        getSimilarPlayers: async (_, { Position, Targets, Name }) => {
-                return await Player.find({
-                    $and: [
-                        { Position: { $eq: Position } },
-                        { Target: { $in: Targets } },
-                        { Name: { $ne: Name } },
-                        { imgFile: { $exists: true } },
-                        { G: { $gt: 100 } },
-                    ]
-                }).sort({ PER: -1, WS: -1, Target: 0}).limit(4);
+        getSimilarPlayers: async (_, { Position, Targets, Name, Archetype }) => {
+            return await Player.find({
+                $and: [
+                    { Position: { $eq: Position } },
+                    { Target: { $in: Targets } },
+                    { Name: { $ne: Name } },
+                    { imgFile: { $exists: true } },
+                    { G: { $gt: 100 } },
+                    { Archetype: { $eq: Archetype } },
+                ]
+            }).sort({Target: 0 }).limit(4);
         },
     },
 };

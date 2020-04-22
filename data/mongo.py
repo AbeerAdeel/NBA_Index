@@ -68,7 +68,6 @@ def getAllData():
     data = collection.find({}, {"_id": 0})
     return data
 
-
 def getAllNonCurrentPlayers():
     data = collection.find(
         {"$and": [{"isActive": {"$eq": False}},
@@ -118,9 +117,11 @@ def createIndexes():
 
 
 def uploadImageNames():
-    for i in scrape_data.getImageNames(scrape_data.getAllLinks(), False):
-        name = i['Name']
+    images = scrape_data.getImageNames(scrape_data.getAllLinks(), False)
+    for i in images:
+        name = unidecode.unidecode(i['Name'])
         imgFile = i['imgFile']
+        print(name, imgFile)
         collection.update(
             {"Name": name}, {"$set": {"imgFile": imgFile}})
 
@@ -215,4 +216,3 @@ def updatePositions():
             print(name, position)
             collection.update({"Name": name}, {"$set": {"Position": position}})
 
-updatePositions()

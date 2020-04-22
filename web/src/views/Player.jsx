@@ -33,36 +33,35 @@ import Spinner from 'react-bootstrap/Spinner';
 
 const PlayerQuery = gql`
     query Player($_id: ID!) {
-    getCertainPlayer(_id: $_id) {
-        id
-        Name
-        PTS
-        TRB
-        AST
-        Position
-        PER
-        WS
-        imgFile
-        MVP
-        AllNBA
-        NBAChamp
-        AS
-        AllDefensive
-        ScoringChamp
-        BLKChamp
-        ASTChamp
-        TRBChamp
-        STLChamp
-        SixthMan
-        ROY
-        DefPOY
-        MostImproved
-        College
-        Weight
-        Height
-        birthDate
-        Target
-    }
+        getCertainPlayer(_id: $_id) {
+            id
+            Name
+            PTS
+            TRB
+            AST
+            Position
+            PER
+            WS
+            imgFile
+            MVP
+            AllNBA
+            NBAChamp
+            AS
+            AllDefensive
+            ScoringChamp
+            BLKChamp
+            ASTChamp
+            TRBChamp
+            STLChamp
+            SixthMan
+            ROY
+            DefPOY
+            MostImproved
+            College
+            Weight
+            Height
+            Target
+        }
     }
 `;
 
@@ -89,13 +88,14 @@ const StatsQuery = gql`
 `;
 
 const SimilarQuery = gql`
-    query SimilarPlayers($Position: String!, $Targets: [String]!, $Name: String!) {
-        getSimilarPlayers(Position: $Position, Targets: $Targets, Name: $Name) {
+    query SimilarPlayers($Position: String!, $Targets: [String]!, $Name: String!, $Archetype: String!) {
+        getSimilarPlayers(Position: $Position, Targets: $Targets, Name: $Name, Archetype: $Archetype) {
             id
             Name
             Position
             imgFile
             Target
+            Archetype
         }
     }
 `;
@@ -145,8 +145,8 @@ class Player extends React.Component {
         return awardsArr;
     }
 
-    handleOnClick(id, name, position, targets) {
-        this.props.setPlayer({ id, name, position, targets });
+    handleOnClick(id, name, position, targets, archetype) {
+        this.props.setPlayer({ id, name, position, targets, archetype});
         this.props.history.push('player');
     }
 
@@ -264,7 +264,6 @@ class Player extends React.Component {
                                                 <ul style={{ listStyleType: "none", marginTop: "-10px" }}>
                                                     <h5><li style={{ marginLeft: '-20px' }}><b>Height: </b>{playerInfo.Height}</li></h5>
                                                     <h5><li style={{ marginLeft: '-20px' }}><b>Weight: </b>{playerInfo.Weight}lb</li></h5>
-                                                    <h5><li style={{ marginLeft: '-20px' }}><b>Birth Date: </b>{playerInfo.birthDate}</li></h5>
                                                     <h5><li style={{ marginLeft: '-20px' }}><b>College/HS: </b>{playerInfo.College}</li></h5>
                                                 </ul>
                                             </Row>
@@ -381,7 +380,7 @@ class Player extends React.Component {
                 </Query>
                 <br />
                 <br />
-                <Query query={SimilarQuery} variables={{ Position: this.props.selectCurrentPlayer.position, Targets: this.props.selectCurrentPlayer.targets, Name: this.props.selectCurrentPlayer.name }}>
+                <Query query={SimilarQuery} variables={{ Position: this.props.selectCurrentPlayer.position, Targets: this.props.selectCurrentPlayer.targets, Name: this.props.selectCurrentPlayer.name, Archetype: this.props.selectCurrentPlayer.archetype}}>
                     {({ loading, error, data }) => {
                         if (loading) {
                             return <Spinner animation="border" role="status">
@@ -412,7 +411,7 @@ class Player extends React.Component {
                                                     <CardFooter>
                                                         <hr />
                                                         <div className="stats">
-                                                            <a href="javascript:void(0)" onClick={() => this.handleOnClick(item.id, item.Name, item.Position, targets)}>View more info...</a>
+                                                            <a href="javascript:void(0)" onClick={() => this.handleOnClick(item.id, item.Name, item.Position, targets, item.Archetype)}>View more info...</a>
                                                         </div>
                                                     </CardFooter>
                                                 </Card>

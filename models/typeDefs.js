@@ -4,7 +4,7 @@ export const typeDefs = gql`
   type Query {
     getAllPlayers(search: String!, limit: Int!): [Player!]!
     getCertainPlayer(_id: ID!): [Player!]!
-    getSimilarPlayers(Position: String!, Targets:[String]!, Name: String!): [Player!]!
+    getSimilarPlayers(Position: String!, Targets:[String]!, Name: String!, Archetype: String!): [Player!]!
     getPlayerStats(Name: String!): [Stat!]!
   }
   type Player {
@@ -51,6 +51,7 @@ export const typeDefs = gql`
     Height: String
     birthDate: String
     College: String
+    Archetype: String
   },
   type Stat {
     id: ID
