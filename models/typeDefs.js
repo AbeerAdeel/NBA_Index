@@ -4,11 +4,11 @@ export const typeDefs = gql`
   type Query {
     getAllPlayers(search: String!, limit: Int!): [Player!]!
     getCertainPlayer(_id: ID!): [Player!]!
-    getSimilarPlayers(Position: String!, Targets:[String]!, Name: String!, Archetype: String!): [Player!]!
+    getSimilarPlayers(Position: String!, Targets:[String]!, Name: String!, PER: Float!): [Player!]!
     getPlayerStats(Name: String!): [Stat!]!
   }
   type Player {
-    id: ID!
+    _id: ID!
     Name: String!
     G: Int
     PTS: Float

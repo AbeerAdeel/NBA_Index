@@ -24,11 +24,11 @@ import {
 const SearchQuery = gql`
 query Player($search: String!) {
   getAllPlayers(search: $search, limit: 10) {
-    id
+    _id
     Name
     Position
     Target
-    Archetype
+    PER
   }
 }
 `;
@@ -46,17 +46,17 @@ class Dashboard extends React.Component {
 
     handleSubmit(value, data) {
         const player = data.filter(x => x.Name === value);
-        const id = player[0].id;
+        const id = player[0]._id;
         const name = player[0].Name;
         const position = player[0].Position;
         const targets = player[0].Target === "Once in a Generation" ? ["Once in a Generation", "All Time Great"]: [player[0].Target];
-        const archetype = player[0].Archetype ? player[0].Archetype : "";
-        this.props.setPlayer({ id, name, position, targets, archetype});
+        const PER = player[0].PER ? player[0].PER : 0.0;
+        this.props.setPlayer({ id, name, position, targets, PER});
         this.props.history.push('player');
     }
 
-    handleOnClick(id, name, position, targets, archetype) {
-        this.props.setPlayer({ id, name, position, targets, archetype});
+    handleOnClick(id, name, position, targets, PER) {
+        this.props.setPlayer({ id, name, position, targets, PER});
         this.props.history.push('player');
     }
 
@@ -110,7 +110,7 @@ class Dashboard extends React.Component {
                             <CardFooter>
                                 <hr />
                                 <div className="stats">
-                                    <a href="javascript:void(0)" onClick={() => this.handleOnClick("5e9a51d6332e4992bcc3956c", "LeBron James", "SF", ["Once in a Generation", "All Time Great"], "Superstar")}>View more info...</a>
+                                    <a href="javascript:void(0)" onClick={() => this.handleOnClick("5e9a51d6332e4992bcc3956c", "LeBron James", "SF", ["Once in a Generation", "All Time Great"], 27.5)}>View more info...</a>
                                 </div>
                             </CardFooter>
                         </Card>
@@ -127,7 +127,7 @@ class Dashboard extends React.Component {
                             <CardFooter>
                                 <hr />
                                 <div className="stats">
-                                    <a href="javascript:void(0)" onClick={() => this.handleOnClick("5e9a4680332e4992bcc38495", "Michael Jordan", "SG", ["Once in a Generation", "All Time Great"], "Superstar")}>View more info...</a>
+                                    <a href="javascript:void(0)" onClick={() => this.handleOnClick("5e9a4680332e4992bcc38495", "Michael Jordan", "SG", ["Once in a Generation", "All Time Great"], 27.9)}>View more info...</a>
                                 </div>
                             </CardFooter>
                         </Card>
@@ -144,7 +144,7 @@ class Dashboard extends React.Component {
                             <CardFooter>
                                 <hr />
                                 <div className="stats">
-                                    <a href="javascript:void(0)" onClick={() => this.handleOnClick("5e9a4680332e4992bcc38483", "Kobe Bryant", "SG", ["Once in a Generation", "All Time Great"], "Superstar")}>View more info...</a>
+                                    <a href="javascript:void(0)" onClick={() => this.handleOnClick("5e9a4680332e4992bcc38483", "Kobe Bryant", "SG", ["Once in a Generation", "All Time Great"], 22.9)}>View more info...</a>
                                 </div>
                             </CardFooter>
                         </Card>
@@ -161,7 +161,7 @@ class Dashboard extends React.Component {
                             <CardFooter>
                                 <hr />
                                 <div className="stats">
-                                    <a href="javascript:void(0)" onClick={() => this.handleOnClick("5e9a51d6332e4992bcc3954b", "Stephen Curry", "PG", ["All Time Great"], "Superstar")}>View more info...</a>
+                                    <a href="javascript:void(0)" onClick={() => this.handleOnClick("5e9a51d6332e4992bcc3954b", "Stephen Curry", "PG", ["All Time Great"], 23.8)}>View more info...</a>
                                 </div>
                             </CardFooter>
                         </Card>
