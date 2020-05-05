@@ -3,7 +3,6 @@ import rootReducer from './reducer';
 
 function saveToLocalStorage(state) {
     try {
-        console.log('hello');
         const serializedState = JSON.stringify(state);
         localStorage.setItem('state', serializedState);
     }
@@ -15,7 +14,6 @@ function saveToLocalStorage(state) {
 function loadFromLocalStorage() {
     try {
         const serializedState = localStorage.getItem('state');
-        console.log("state", serializedState);
         if (serializedState === null) return undefined
         return JSON.parse(serializedState);
     }

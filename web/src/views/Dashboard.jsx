@@ -1,13 +1,8 @@
 import React from "react";
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import TextField from '@material-ui/core/TextField';
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import gql from 'graphql-tag';
-import { Query } from 'react-apollo';
 import * as playerActions from '../managers/actions';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-
+import Search from "components/Search/Search";
 
 // reactstrap components
 import {
@@ -20,82 +15,21 @@ import {
     Col,
 } from "reactstrap";
 
-
-const SearchQuery = gql`
-query Player($search: String!) {
-  getAllPlayers(search: $search, limit: 10) {
-    _id
-    Name
-    Position
-    Target
-    PER
-  }
-}
-`;
-
 class Dashboard extends React.Component {
     constructor() {
         super();
-        this.state = {
-            dataSource: [],
-            value: "",
-        }
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this._handleTextFieldChange = this._handleTextFieldChange.bind(this);
-    }
-
-    handleSubmit(value, data) {
-        const player = data.filter(x => x.Name === value);
-        const id = player[0]._id;
-        const name = player[0].Name;
-        const position = player[0].Position;
-        const targets = player[0].Target === "Once in a Generation" ? ["Once in a Generation", "All Time Great"]: [player[0].Target];
-        const PER = player[0].PER ? player[0].PER : 0.0;
-        this.props.setPlayer({ id, name, position, targets, PER});
-        this.props.history.push('player');
+        this.handleOnClick = this.handleOnClick.bind(this);
     }
 
     handleOnClick(id, name, position, targets, PER) {
-        this.props.setPlayer({ id, name, position, targets, PER});
+        this.props.setPlayer({ id, name, position, targets, PER });
         this.props.history.push('player');
     }
-
-    _handleTextFieldChange(e) {
-        this.setState({
-            value: e.target.value
-        });
-    }
-
 
     render() {
         return (
             <div className="content">
-                <MuiThemeProvider>
-                    <Query query={SearchQuery} skip={this.state.value === ""} variables={{ search: this.state.value }}>
-                        {({ loading, error, data }) => {
-                            const dataSource = data && data.getAllPlayers ? data.getAllPlayers.map(x => x.Name) : [];
-                            return (
-                                <Autocomplete
-                                    freeSolo
-                                    autoFocus
-                                    id="free-solo-2-demo"
-                                    onChange={(event, value) => this.handleSubmit(value, data.getAllPlayers)}
-                                    options={dataSource}
-                                    renderInput={(params) => (
-                                        <TextField
-                                            {...params}
-                                            label="Search for a player ..."
-                                            margin="normal"
-                                            variant="outlined"
-                                            value={this.state.value}
-                                            onChange={this._handleTextFieldChange}
-                                        />
-                                    )}
-                                />
-                            )
-                        }}
-                    </Query>
-                </MuiThemeProvider>
+                <Search />
                 <br />
                 <Row>
                     <Col md="3">

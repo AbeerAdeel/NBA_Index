@@ -17,7 +17,6 @@ import PropTypes from 'prop-types';
 import * as playerSelectors from '../managers/selector';
 import * as playerActions from '../managers/actions';
 
-
 // reactstrap components
 import {
     Card,
@@ -30,6 +29,7 @@ import {
 } from "reactstrap";
 
 import Spinner from 'react-bootstrap/Spinner';
+import Search from "components/Search/Search";
 
 const PlayerQuery = gql`
     query Player($_id: ID!) {
@@ -176,9 +176,10 @@ class Player extends React.Component {
     }
 
     render() {
-        console.log(this.props.selectCurrentPlayer);
         return (
             <div className="content">
+                <Search/>
+                <br/>
                 <Query query={PlayerQuery} skip={!this.props.selectCurrentPlayer.id} variables={{ _id: this.props.selectCurrentPlayer.id }}>
                     {({ loading, error, data }) => {
                         if (loading) {
