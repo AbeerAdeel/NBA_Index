@@ -88,7 +88,7 @@ const StatsQuery = gql`
 `;
 
 const SimilarQuery = gql`
-    query SimilarPlayers($Position: String!, $Targets: [String]!, $Name: String!, $PER: Float!) {
+    query SimilarPlayers($Position: String, $Targets: [String]!, $Name: String!, $PER: Float) {
         getSimilarPlayers(Position: $Position, Targets: $Targets, Name: $Name, PER: $PER) {
             _id
             Name

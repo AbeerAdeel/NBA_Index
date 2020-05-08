@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react"
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -34,7 +34,7 @@ class Search extends React.Component {
     }
 
     handleSubmit(value, data) {
-        const player = data.filter(x => x.Name === value);
+        const player = data.filter(x => x._id === value.id);
         const id = player[0]._id;
         const name = player[0].Name;
         const position = player[0].Position;
@@ -53,18 +53,24 @@ class Search extends React.Component {
     }
 
     render() {
-        console.log(this.state.value);
         return (
             <MuiThemeProvider>
                 <Query query={SearchQuery} skip={this.state.value === ""} variables={{ search: this.state.value }}>
                     {({ loading, error, data }) => {
                         const dataSource = data && data.getAllPlayers ? data.getAllPlayers.map(x => x.Name) : [];
+                        const temp = data && data.getAllPlayers;
+                        const options = [];
+                        temp && temp.forEach((element) => {
+                            options.push({ id: element._id, Name: element.Name });
+                        });
                         return (
                             <Autocomplete
                                 disableClearable
                                 freeSolo
                                 id="free-solo-2-demo"
-                                options={dataSource}
+                                options={options}
+                                renderOption={option => <Fragment>{option.Name}</Fragment>}
+                                getOptionLabel={option => option.Name}
                                 onChange={(event, value) => this.handleSubmit(value, data.getAllPlayers)}
                                 renderInput={(params) => (
                                     <TextField
