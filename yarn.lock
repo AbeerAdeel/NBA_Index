@@ -1933,6 +1933,11 @@ dot-prop@^4.1.0:
   dependencies:
     is-obj "^1.0.0"
 
+double-metaphone@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/double-metaphone/-/double-metaphone-1.0.5.tgz#083fa60571cf876499c03dcecbc75ffb8c472701"
+  integrity sha512-KMP/DMnXxe7/C1ike9Y7URr2HTYwgZ2MduCl3hDyBgr+dhXETmORfSsKIcEr+bKtqz186DDf385xY28Ikj5fww==
+
 duplexer3@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/duplexer3/-/duplexer3-0.1.4.tgz#ee01dd1cac0ed3cbc7fdbea37dc0a8f1ce002ce2"
@@ -2935,6 +2940,11 @@ merge-descriptors@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/merge-descriptors/-/merge-descriptors-1.0.1.tgz#b00aaa556dd8b44568150ec9d1b953f3f90cbb61"
   integrity sha1-sAqqVW3YtEVoFQ7J0blT8/kMu2E=
+
+metaphone@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/metaphone/-/metaphone-1.0.6.tgz#5c72473312f7fae1965e673fb95d9a6dd57b1dd3"
+  integrity sha512-1xKourcr1sNyZh+6+PApMx6EFHrGd63M/M1m6sG4TqlNfYIzXgnFoOJhdf3TIqOdb2gEil56sRdm3sc/xRbdFQ==
 
 methods@~1.1.2:
   version "1.1.2"

@@ -58,7 +58,7 @@ class Sidebar extends React.Component {
         <div className="sidebar-wrapper" style={s} ref={this.sidebar}>
           <Nav>
             {this.props.routes.map((prop, key) => {
-              if (prop.name === 'Player') {
+              if (prop.name === 'Player' || prop.name === 'Search') {
                 return (
                   <li
                     className={
@@ -75,9 +75,6 @@ class Sidebar extends React.Component {
                     </NavLink>
                   </li>
                 )
-              }
-              else {
-
               }
               return (
                 <li
