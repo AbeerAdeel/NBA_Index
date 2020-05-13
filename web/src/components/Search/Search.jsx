@@ -34,9 +34,10 @@ class Search extends React.Component {
     }
 
     handleSubmit(event, value, data) {
-        console.log(event);
+        console.log(value);
         const player = data.filter(x => x._id === value.id);
         if (player.length === 0) {
+            this.props.setSearch(value);
             this.props.history.push('search')
         }
         else {
@@ -100,11 +101,13 @@ class Search extends React.Component {
 function mapDispatchToProps(dispatch) {
     return {
         setPlayer: (playerObj) => dispatch(playerActions.setPlayer(playerObj)),
+        setSearch: (search) => dispatch(playerActions.setSearch(search))
     };
 }
 
 Search.propTypes = {
     setPlayer: PropTypes.func,
+    setSerch: PropTypes.func
 };
 
 export default withRouter(connect(null, mapDispatchToProps)(Search));

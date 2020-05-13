@@ -180,7 +180,7 @@ class Player extends React.Component {
             <div className="content">
                 <Search/>
                 <br/>
-                <Query query={PlayerQuery} skip={!this.props.selectCurrentPlayer.id} variables={{ _id: this.props.selectCurrentPlayer.id }}>
+                <Query query={PlayerQuery} skip={!this.props.selectCurrentState.id} variables={{ _id: this.props.selectCurrentState.id }}>
                     {({ loading, error, data }) => {
                         if (loading) {
                             return <Spinner animation="border" role="status">
@@ -314,7 +314,7 @@ class Player extends React.Component {
                         )
                     }}
                 </Query>
-                <Query query={StatsQuery} skip={!this.props.selectCurrentPlayer.name} variables={{ Name: this.props.selectCurrentPlayer.name }}>
+                <Query query={StatsQuery} skip={!this.props.selectCurrentState.name} variables={{ Name: this.props.selectCurrentState.name }}>
                     {({ loading, error, data }) => {
                         if (loading) {
                             return <Spinner animation="border" role="status">
@@ -381,7 +381,7 @@ class Player extends React.Component {
                 </Query>
                 <br />
                 <br />
-                <Query query={SimilarQuery} variables={{ Position: this.props.selectCurrentPlayer.position, Targets: this.props.selectCurrentPlayer.targets, Name: this.props.selectCurrentPlayer.name, PER: this.props.selectCurrentPlayer.PER}}>
+                <Query query={SimilarQuery} variables={{ Position: this.props.selectCurrentState.position, Targets: this.props.selectCurrentState.targets, Name: this.props.selectCurrentState.name, PER: this.props.selectCurrentState.PER}}>
                     {({ loading, error, data }) => {
                         if (loading) {
                             return <Spinner animation="border" role="status">
@@ -394,7 +394,7 @@ class Player extends React.Component {
                         return (
                             <Row>
                                 <Col xs="12">
-                                    <CardTitle tag="h5">Similar Players to {this.props.selectCurrentPlayer.name}</CardTitle>
+                                    <CardTitle tag="h5">Similar Players to {this.props.selectCurrentState.name}</CardTitle>
                                 </Col>
                                 {
                                     similarPlayers.map((item) => {
@@ -430,7 +430,7 @@ class Player extends React.Component {
 }
 
 const mapStateToProps = createStructuredSelector({
-    selectCurrentPlayer: playerSelectors.selectCurrentPlayer(),
+    selectCurrentState: playerSelectors.selectCurrentState(),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -439,9 +439,8 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-
 Player.propTypes = {
-    selectCurrentPlayer: PropTypes.object
+    selectCurrentState: PropTypes.object
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Player);

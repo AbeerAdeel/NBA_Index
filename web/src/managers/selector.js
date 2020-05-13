@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 
 const selectState = () => (state) => state.PlayerStore;
 
-export const selectCurrentPlayer = () => createSelector(
+export const selectCurrentState = () => createSelector(
     selectState(),
     (state) => state
 );
