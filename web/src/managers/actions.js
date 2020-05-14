@@ -4,6 +4,6 @@ export function setPlayer(playerObj) {
     return { type: actionTypes.SET_PLAYER, playerObj };
 }
 
-export function setSearch(search) {
-    return { type: actionTypes.SET_SEARCH, search };
+export function setSearch(searchObj) {
+    return { type: actionTypes.SET_SEARCH, searchObj };
 }

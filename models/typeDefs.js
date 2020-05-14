@@ -6,6 +6,7 @@ export const typeDefs = gql`
     getCertainPlayer(_id: ID!): [Player!]!
     getSimilarPlayers(Position: String, Targets:[String]!, Name: String!, PER: Float): [Player!]!
     getPlayerStats(Name: String!): [Stat!]!
+    getSearchResults(search: String!, limit: Int!, skip: Int!): Results!
   }
   type Player {
     _id: ID!
@@ -71,5 +72,9 @@ export const typeDefs = gql`
     BLK: [Float]
     TOV: [Float]
     PTS: [Float]
+  }
+  type Results {
+    players: [Player]
+    count: Int
   }
 `;

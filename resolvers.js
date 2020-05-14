@@ -1,11 +1,15 @@
 import { Player } from './models/player';
 import { Stats } from './models/stats';
-const doubleMetaphone = require('double-metaphone');
 
 export const resolvers = {
     Query: {
         getAllPlayers: async (_, { search, limit }) => {
-            return await Player.find({ Name: { $regex: search, $options: "i" } }).limit(limit)
+            return await Player.find({ Name: { $regex: search, $options: "i" } }).limit(limit).sort({ G: -1 })
+        },
+        getSearchResults: async (_, { search, limit, skip }) => {
+            const players = await Player.find({ Name: { $regex: search, $options: "i" } }).limit(limit).skip(skip).sort({ G: -1 });
+            const count = await Player.count({ Name: { $regex: search, $options: "i" } });
+            return { players, count };
         },
         getCertainPlayer: async (_, { _id }) => {
             return await Player.find({ _id })

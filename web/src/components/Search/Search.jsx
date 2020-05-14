@@ -37,7 +37,7 @@ class Search extends React.Component {
         console.log(value);
         const player = data.filter(x => x._id === value.id);
         if (player.length === 0) {
-            this.props.setSearch(value);
+            this.props.setSearch({search: value, page: 1, skip: 0});
             this.props.history.push('search')
         }
         else {
