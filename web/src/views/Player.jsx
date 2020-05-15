@@ -88,14 +88,15 @@ const StatsQuery = gql`
 `;
 
 const SimilarQuery = gql`
-    query SimilarPlayers($Position: String, $Targets: [String]!, $Name: String!, $PER: Float) {
-        getSimilarPlayers(Position: $Position, Targets: $Targets, Name: $Name, PER: $PER) {
+    query SimilarPlayers($Position: String, $Targets: [String]!, $Name: String!, $PER: Float, $Archetype: String) {
+        getSimilarPlayers(Position: $Position, Targets: $Targets, Name: $Name, PER: $PER, Archetype: $Archetype) {
             _id
             Name
             Position
             imgFile
             Target
             PER
+            Archetype
         }
     }
 `;
@@ -145,8 +146,8 @@ class Player extends React.Component {
         return awardsArr;
     }
 
-    handleOnClick(id, name, position, targets, PER) {
-        this.props.setPlayer({ id, name, position, targets, PER});
+    handleOnClick(id, name, position, targets, PER, archetype) {
+        this.props.setPlayer({ id, name, position, targets, PER, archetype});
         this.props.history.push('player');
     }
 
@@ -176,6 +177,7 @@ class Player extends React.Component {
     }
 
     render() {
+        console.log(this.props.selectCurrentState);
         return (
             <div className="content">
                 <Search/>
@@ -381,7 +383,7 @@ class Player extends React.Component {
                 </Query>
                 <br />
                 <br />
-                <Query query={SimilarQuery} variables={{ Position: this.props.selectCurrentState.position, Targets: this.props.selectCurrentState.targets, Name: this.props.selectCurrentState.name, PER: this.props.selectCurrentState.PER}}>
+                <Query query={SimilarQuery} variables={{ Position: this.props.selectCurrentState.position, Targets: this.props.selectCurrentState.targets, Name: this.props.selectCurrentState.name, PER: this.props.selectCurrentState.PER, Archetype: this.props.selectCurrentState.archetype}}>
                     {({ loading, error, data }) => {
                         if (loading) {
                             return <Spinner animation="border" role="status">
@@ -389,6 +391,7 @@ class Player extends React.Component {
                             </Spinner>
                         }
                         const similarPlayers = data.getSimilarPlayers;
+                        console.log(similarPlayers);
                         const nCards = 12 / similarPlayers.length;
 
                         return (
@@ -412,7 +415,7 @@ class Player extends React.Component {
                                                     <CardFooter>
                                                         <hr />
                                                         <div className="stats">
-                                                            <a href="javascript:void(0)" onClick={() => this.handleOnClick(item._id, item.Name, item.Position, targets, item.PER)}>View more info...</a>
+                                                            <a href="javascript:void(0)" onClick={() => this.handleOnClick(item._id, item.Name, item.Position, targets, item.PER, item.Archetype)}>View more info...</a>
                                                         </div>
                                                     </CardFooter>
                                                 </Card>

@@ -18,6 +18,7 @@ query Player($search: String!) {
     Position
     Target
     PER
+    Archetype
   }
 }
 `;
@@ -34,8 +35,8 @@ class Search extends React.Component {
     }
 
     handleSubmit(event, value, data) {
-        console.log(value);
         const player = data.filter(x => x._id === value.id);
+        console.log(player);
         if (player.length === 0) {
             this.props.setSearch({search: value, page: 1, skip: 0});
             this.props.history.push('search')
@@ -46,7 +47,8 @@ class Search extends React.Component {
             const position = player[0].Position;
             const targets = player[0].Target === "Once in a Generation" ? ["Once in a Generation", "All Time Great"] : [player[0].Target];
             const PER = player[0].PER ? player[0].PER : 0.0;
-            this.props.setPlayer({ id, name, position, targets, PER });
+            const archetype = player[0].Archetype;
+            this.props.setPlayer({ id, name, position, targets, PER, archetype});
             if (!window.location.pathname.includes('player')) {
                 this.props.history.push('player')
             }

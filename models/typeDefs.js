@@ -4,7 +4,7 @@ export const typeDefs = gql`
   type Query {
     getAllPlayers(search: String!, limit: Int!): [Player!]!
     getCertainPlayer(_id: ID!): [Player!]!
-    getSimilarPlayers(Position: String, Targets:[String]!, Name: String!, PER: Float): [Player!]!
+    getSimilarPlayers(Position: String, Targets:[String]!, Name: String!, PER: Float, Archetype: String): [Player!]!
     getPlayerStats(Name: String!): [Stat!]!
     getSearchResults(search: String!, limit: Int!, skip: Int!): Results!
   }

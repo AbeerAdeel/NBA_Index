@@ -35,6 +35,7 @@ const PlayerQuery = gql`
             WS
             imgFile
             Target
+            Archetype
           }
           count
         }
@@ -48,8 +49,8 @@ class Results extends React.Component {
     this.handleOnClick = this.handleOnClick.bind(this);
   }
 
-  handleOnClick(id, name, position, targets, PER) {
-    this.props.setPlayer({ id, name, position, targets, PER });
+  handleOnClick(id, name, position, targets, PER, archetype) {
+    this.props.setPlayer({ id, name, position, targets, PER, archetype});
     this.props.history.push('player');
   }
 
@@ -144,7 +145,7 @@ class Results extends React.Component {
                           <CardFooter>
                             <hr />
                             <div className="stats">
-                              <a href="javascript:void(0)" onClick={() => this.handleOnClick(item._id, item.Name, item.Position, targets, item.PER)}>View more info...</a>
+                              <a href="javascript:void(0)" onClick={() => this.handleOnClick(item._id, item.Name, item.Position, targets, item.PER, item.Archetype)}>View more info...</a>
                             </div>
                           </CardFooter>
                         </Card>
