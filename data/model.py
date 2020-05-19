@@ -1,6 +1,6 @@
 from sklearn.utils import resample, class_weight
 from collections import Counter
-from mongo import getAllNonCurrentPlayers, getAllActivePlayers
+from mongo import getAllNonCurrentPlayers, getAllPlayers
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -11,32 +11,24 @@ pd.options.mode.chained_assignment = None
 
 def getCleanDataSets():
     past_data = getAllNonCurrentPlayers()
-    active_data = getAllActivePlayers()
+    all_data = getAllPlayers()
 
     df = pd.DataFrame(past_data)
     df['Target'] = 'NA'
-    df_active = pd.DataFrame(active_data)
+    df_all = pd.DataFrame(all_data)
 
     df_columns = list(df.columns)
-    active_columns = list(df_active.columns)
+    all_columns = list(df_all.columns)
 
     df[df_columns] = df[df_columns].replace({'NA': np.nan})
-    df_active[active_columns] = df_active[active_columns].replace({
+    df_all[all_columns] = df_all[all_columns].replace({
                                                                   'NA': np.nan})
 
-    return df.fillna(0), df_active.fillna(0)
+    return df[:750].fillna(0), df_all.fillna(0)
 
 
 def getDataWithOutputs(df):
     # Rating = ((Win Shares / # of Games) * Player Efficiency Rating)) + sum(Awards)
-
-    # Rating > 40.0 ----> Once in a Generation
-    # 20.0 <= Rating < 40.0 ----> All Time Great
-    # 10.0 <= Rating < 20.0 ----> All Star
-    # 3.0 <= Rating < 10.0 ----> Quality Starter
-    # 0 <= Rating < 3.0 ----> Role Player
-    # Rating < 0 ----> Bench Player
-
     targets = []
     awards = ['MVP', 'AllNBA', 'NBAChamp', 'AS', 'AllDefensive',
               'ScoringChamp', 'BLKChamp', 'ASTChamp', 'TRBChamp', 'STLChamp']
@@ -49,7 +41,9 @@ def getDataWithOutputs(df):
             targets.append('All Time Great')
         elif rating >= 10.0 and rating < 20.0:
             targets.append('All Star')
-        elif rating >= 0.5 and rating < 10.0:
+        elif rating >=5.0 and rating < 10.0:
+            targets.append('Quality Starter')
+        elif rating >= 0.5 and rating < 5:
             targets.append('Average Player')
         elif rating < 0.5:
             targets.append('Bench Player')
@@ -60,20 +54,21 @@ def getDataWithOutputs(df):
 def getDataframe():
     df = getDataWithOutputs(getCleanDataSets()[0])
     minority_category = ['Once in a Generation',
-        'All Time Great', 'All Star', 'Average Player']
-    df_majority = df[df['Target'] == 'Bench Player'][:700]
+        'All Time Great', 'All Star', 'Bench Player', 'Quality Starter']
     print(df.Target.value_counts())
+    df_majority = df[df['Target'] == 'Average Player'][:360]
     lst = []
     for i in minority_category:
         df_minority = df[df['Target'] == i]
         df_minority_upsampled = resample(
-            df_minority, replace=True, n_samples=700, random_state=123)
+            df_minority, replace=True, n_samples=360, random_state=123)
         lst.append(df_minority_upsampled)
     lst.append(df_majority)
 
     # df_minority = df[df['Target'] != 'Bench Player']
 
     df_upsampled = pd.concat(lst)
+    # print(df_upsampled.Target.value_counts())
     return df_upsampled
 
 
@@ -81,19 +76,15 @@ def getInputOutput(df):
     columns = list(df.columns)
     columns.remove('Name')
     columns.remove('Target')
+    columns.remove('G')
     targets = df['Target']
     values = df[columns].values
-    print(len(df))
-    print(len(columns))
     return values, targets
 
 
 def makeModel():
     values = getInputOutput(getDataframe())[0]
     targets = getInputOutput(getDataframe())[1]
-
-    print(len(values))
-
     le = LabelEncoder()
 
     X, y = values, targets
@@ -102,7 +93,6 @@ def makeModel():
 
     # split into train and test datasets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-    print(X_train.shape, X_test.shape, y_train.shape, y_test.shape)
 
     n_features = X_train.shape[1]
 
@@ -110,7 +100,7 @@ def makeModel():
     model.add(tf.keras.layers.Flatten(input_shape=(n_features,)))
 
     model.add(tf.keras.layers.Dense(units=32, activation='relu'))
-    model.add(tf.keras.layers.Dense(units=5, activation='softmax'))
+    model.add(tf.keras.layers.Dense(units=6, activation='softmax'))
     model.compile(optimizer=tf.keras.optimizers.Adam(lr=0.001),
                   loss="sparse_categorical_crossentropy",
                   metrics=['accuracy'])
@@ -135,7 +125,11 @@ def makeModel():
     print(df[df['Target'] == 'All Star']['Name'])
     print('####### Average Player #######')
     print(df[df['Target'] == 'Average Player']['Name'])
+    print('####### Quality Starter #######')
+    print(df[df['Target'] == 'Quality Starter']['Name'])
     print('####### Bench Player #######')
     print(df[df['Target'] == 'Bench Player']['Name'])
 
     return df
+
+

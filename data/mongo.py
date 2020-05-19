@@ -23,7 +23,8 @@ def updateTargets():
     df = pd.read_csv('all_targets.csv')
     for index, row in df.iterrows():
         print(row['Name'], row['Target'])
-        collection.update({"Name": row['Name']}, {"$set": {"Target": row['Target']}})
+        collection.update({"Name": row['Name']}, {
+                          "$set": {"Target": row['Target']}})
 
 
 def uploadAllData():
@@ -68,6 +69,7 @@ def getAllData():
     data = collection.find({}, {"_id": 0})
     return data
 
+
 def getAllNonCurrentPlayers():
     data = collection.find(
         {"$and": [{"isActive": {"$eq": False}},
@@ -79,7 +81,7 @@ def getAllNonCurrentPlayers():
                   {"G": {"$gt": 200}}
                   ]},
         {"_id": 0, "College": 0, "Height": 0, "Weight": 0, "birthDate": 0,
-            "imgFile": 0, "Position": 0, "ABA All-Time": 0, "AllABA": 0, "ABAChamp": 0, "isActive": 0, "YearEnded": 0, "AllBAA": 0, "BAA/NBA Champ": 0, "All-BAA/NBA": 0}
+            "imgFile": 0, "Position": 0, "ABA All-Time": 0, "AllABA": 0, "ABAChamp": 0, "isActive": 0, "YearEnded": 0, "AllBAA": 0, "BAA/NBA Champ": 0, "All-BAA/NBA": 0, "Archetype": 0}
     )
     return data
 
@@ -96,13 +98,17 @@ def updateOtherData():
             {"Name": name}, {"$set": {"YearEnded": year_end}})
 
 
-def getAllActivePlayers():
+def getAllPlayers():
     data = collection.find(
-        {"$and": [{"isActive": {"$eq": True}},
-                  {"G": {"$gt": 200}},
+        {"$and": [{"PER": {"$ne": "NA"}},
+                  {"WS": {"$ne": "NA"}},
+                  {"PER": {"$exists": True}},
+                  {"WS": {"$exists": True}},
+                  {"YearEnded": {"$gt": 1980}},
+                  {"G": {"$gt": 200}}
                   ]},
         {"_id": 0, "College": 0, "Height": 0, "Weight": 0, "birthDate": 0,
-            "imgFile": 0, "Position": 0, "ABA All-Time": 0, "AllABA": 0, "ABAChamp": 0, "isActive": 0, "YearEnded": 0, "AllBAA": 0, "BAA/NBA Champ": 0, "All-BAA/NBA": 0})
+            "imgFile": 0, "Position": 0, "ABA All-Time": 0, "AllABA": 0, "ABAChamp": 0, "isActive": 0, "YearEnded": 0, "AllBAA": 0, "BAA/NBA Champ": 0, "All-BAA/NBA": 0, "Archetype": 0})
     return data
 
 
@@ -113,7 +119,6 @@ def renameFields():
 
 def createIndexes():
     collection.create_index("Name")
-
 
 
 def uploadImageNames():
@@ -215,4 +220,3 @@ def updatePositions():
             position = max(set(lst), key=lst.count)
             print(name, position)
             collection.update({"Name": name}, {"$set": {"Position": position}})
-
