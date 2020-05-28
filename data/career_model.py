@@ -99,8 +99,8 @@ def makeModel():
     model = tf.keras.models.Sequential()
     model.add(tf.keras.layers.Flatten(input_shape=(n_features,)))
 
-    model.add(tf.keras.layers.Dense(units=32, activation='relu'))
-    model.add(tf.keras.layers.Dense(units=6, activation='softmax'))
+    model.add(tf.keras.layers.Dense(32, activation='relu'))
+    model.add(tf.keras.layers.Dense(6, activation='softmax'))
     model.compile(optimizer=tf.keras.optimizers.Adam(lr=0.001),
                   loss="sparse_categorical_crossentropy",
                   metrics=['accuracy'])

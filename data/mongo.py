@@ -220,3 +220,28 @@ def updatePositions():
             position = max(set(lst), key=lst.count)
             print(name, position)
             collection.update({"Name": name}, {"$set": {"Position": position}})
+
+
+def generateActiveStatsData():
+    data = stats_collection.find(
+        {"isActive": True}, {"_id": 0, "Team": 0, "isActive": 0})
+    lst = []
+    for i in data:
+        df = pd.DataFrame(i).sort_values(by=['Year'], ascending=False)
+        length = len(df)
+        if length > 0:
+            current_df = df.head(2).drop(['Year'], axis=1)
+            series = dict(current_df.mean())
+            series['Name'] = list(current_df['Name'])[0]
+            lst.append(series)
+    all_df = pd.DataFrame(lst)
+    all_df.to_csv('current_stats.csv', index=None)
+
+
+def updatePlayerMarketValue():
+    df = pd.read_csv('players.csv', index_col=[0])
+    for index, row in df.iterrows():
+        name = row['Name']
+        value = row['marketValue']
+        print(name, value)
+        collection.update({'Name': name}, {"$set": {"marketValue": value}})
