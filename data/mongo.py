@@ -245,3 +245,11 @@ def updatePlayerMarketValue():
         value = row['marketValue']
         print(name, value)
         collection.update({'Name': name}, {"$set": {"marketValue": value}})
+
+def updatePlayerAverageSalary():
+    data = scrape_data.getAverageSalary()
+    for i in data:
+        name = i['Name']
+        avg = i['avgSalary']
+        print(name, avg)
+        collection.update({'Name': name}, {"$set": {"avgSalary": avg}})

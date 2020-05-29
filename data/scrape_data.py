@@ -7,6 +7,7 @@ from string import ascii_lowercase
 import urllib.request
 import shutil
 import requests
+import unidecode
 
 base_url = 'https://www.basketball-reference.com'
 letters = ascii_lowercase.replace('x', '')
@@ -137,40 +138,41 @@ def isCurrentPlayer(soup):
     return p_count == 2
 
 
-# def getPlayerBackground():
-#     current_rookies = list(getRookieLinks('https://www.basketball-reference.com/leagues/NBA_2020_rookies.html'))
-#     last_rookies = list(getRookieLinks('https://www.basketball-reference.com/leagues/NBA_2019_rookies.html'))
-#     current_rookies.extend(last_rookies)
-#     all_links = generatePlayerLinks(current_rookies)
-#     for link in all_links:
-#         soup = getSoup(link)
-#         div = soup.find('div', itemtype='https://schema.org/Person')
-#         p = div.findAll('p')
-#         positions = []
-#         for p_tag in p:
-#             strong = p_tag.findAll('strong')
-#             for strong_tag in strong:
-#                 if 'Position' in strong_tag.text:
-#                     if 'Guard' in p_tag.text:
-#                         positions
-            
+def getActiveLinks(url='https://www.basketball-reference.com/leagues/NBA_2020_per_game.html'):
+    soup = getSoup(url)
+    cols = [header.string for header in soup.find('thead').findAll('th')]
+    col_idx = cols.index('Player') - 1
+    for tr in soup.find('tbody').findAll('tr'):
+        for td in [tr.findAll('td')]:
+            if len(td) > 0:
+                yield td[col_idx].find('a')['href']
 
 
+def getAverageSalary(url='https://www.basketball-reference.com/contracts/players.html'):
+    soup = getSoup(url)
+    cols = [header.string for header in soup.find('thead').findAll('th')]
+    for tr in soup.find('tbody').findAll('tr'):
+        for td in [tr.findAll('td')]:
+            lst = []
+            if len(td) > 0:
+                name = unidecode.unidecode(td[0].find('a').text)
+                for i in range(2, 8):
+                    if td[i].text !='':
+                        lst.append(int(td[i].text.replace('$', '').replace(',', '')))
+                avg = int(np.array(lst).mean())
+                yield {"Name": name, "avgSalary": avg}
 
 
 def getRookieLinks(url):
     soup = getSoup(url)
     cols = [header.string for header in soup.find('thead').findAll('th')]
     col_idx = 10
-    # links = [th[col_idx].text for th in [tr.findAll(
-    #         'th') for tr in soup.find('tbody').findAll('tr')]]
-    # print(links)
+
     for tr in soup.find('tbody').findAll('tr'):
         for th in tr.findAll('th'):
             player = tr.find('a')
             if player:
                 yield player['href']
-
 
 
 def getPlayerInfo(target, links, getActive):
