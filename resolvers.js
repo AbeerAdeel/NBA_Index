@@ -19,7 +19,6 @@ export const resolvers = {
         },
         getSimilarPlayers: async (_, { Position, Targets, Name, PER, Archetype }) => {
             if (Targets.includes('NA')) {
-                console.log('hello');
                 return await Player.aggregate([
                     {
                         $match: {

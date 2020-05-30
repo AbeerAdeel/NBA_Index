@@ -53,6 +53,8 @@ export const typeDefs = gql`
     birthDate: String
     College: String
     Archetype: String
+    marketValue: Int
+    avgSalary: Int
   },
   type Stat {
     id: ID

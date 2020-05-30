@@ -61,6 +61,9 @@ const PlayerQuery = gql`
             Weight
             Height
             Target
+            avgSalary
+            marketValue
+            isActive
         }
     }
 `;
@@ -147,8 +150,43 @@ class Player extends React.Component {
     }
 
     handleOnClick(id, name, position, targets, PER, archetype) {
-        this.props.setPlayer({ id, name, position, targets, PER, archetype});
+        this.props.setPlayer({ id, name, position, targets, PER, archetype });
         this.props.history.push('player');
+    }
+
+    magnitude (value) {
+        var mag = 0;
+
+        while(value > 1) {
+          mag++;
+          value = value / 10;
+        };
+
+        return mag;
+    }
+
+    humanize (value) {
+        var mag = this.magnitude(value);
+
+        if (mag <= 3) return value;
+
+        if (mag > 3 && mag <= 6) {
+            return value.toString().substr(0, mag - 3) + "K"
+        }
+
+        if (mag > 6 && mag <= 9) {
+            return value.toString().substr(0, mag - 6) + "M"
+        }
+
+        if (mag > 9 && mag <= 12) {
+            return value.toString().substr(0, mag - 9) + "B"
+        }
+
+        if (mag > 12 && mag <= 15) {
+            return value.toString().substr(0, mag - 12) + "T"
+        }
+
+        return value;
     }
 
     getToolTipText(target) {
@@ -176,12 +214,24 @@ class Player extends React.Component {
         return "There hasn't been enough games in the current players career to make a current career evaluation";
     }
 
+    renderContractStatus(obj) {
+        const value = obj.avgSalary / obj.marketValue;
+        console.log("value", value);
+        if (value > 2) {
+            return <h3 style={{color:'red'}}><b>Overpaid</b></h3>
+        }
+        else if (value > 1 && value < 2) {
+            return <h3 style={{color:'blue'}}><b>Paid Accordingly</b></h3>
+        }
+        return <h3 style={{color:'green'}}><b>Underpaid</b></h3>
+    }
+
     render() {
         console.log(this.props.selectCurrentState);
         return (
             <div className="content">
-                <Search/>
-                <br/>
+                <Search />
+                <br />
                 <Query query={PlayerQuery} skip={!this.props.selectCurrentState.id} variables={{ _id: this.props.selectCurrentState.id }}>
                     {({ loading, error, data }) => {
                         if (loading) {
@@ -312,6 +362,41 @@ class Player extends React.Component {
                                         </CardBody>
                                     </Card>
                                 </Col>
+                                <br />
+                                <br />
+                                {playerInfo.isActive &&
+                                    <Col xs="12" sm="4" style={{ marginTop: '20px' }}>
+                                        <Card className="card-stats">
+                                            <CardHeader>
+                                                <CardTitle style={{ textDecoration: "underline" }} tag="h5">Market Value</CardTitle>
+                                            </CardHeader>
+                                            <CardBody className="text-center">
+                                                <h2><b>{this.humanize(playerInfo.marketValue)}</b></h2>
+                                            </CardBody>
+                                        </Card>
+                                    </Col>}
+                                {playerInfo.isActive &&
+                                    <Col xs="12" sm="4" style={{ marginTop: '20px' }}>
+                                        <Card className="card-stats">
+                                            <CardHeader>
+                                                <CardTitle style={{ textDecoration: "underline" }} tag="h5">Average Salary</CardTitle>
+                                            </CardHeader>
+                                            <CardBody className="text-center">
+                                                <h2><b>{this.humanize(playerInfo.avgSalary)}</b></h2>
+                                            </CardBody>
+                                        </Card>
+                                    </Col>}
+                                {playerInfo.isActive &&
+                                    <Col xs="12" sm="4" style={{ marginTop: '20px' }}>
+                                        <Card className="card-stats">
+                                            <CardHeader>
+                                                <CardTitle style={{ textDecoration: "underline" }} tag="h5">Contract Status</CardTitle>
+                                            </CardHeader>
+                                            <CardBody className="text-center">
+                                                <this.renderContractStatus avgSalary={playerInfo.avgSalary} marketValue={playerInfo.marketValue}/>
+                                            </CardBody>
+                                        </Card>
+                                    </Col>}
                             </Row>
                         )
                     }}
@@ -334,7 +419,7 @@ class Player extends React.Component {
                             <Col xs="12" style={{ marginTop: '30px' }}>
                                 <CardTitle tag="h5">Career Stats (Per Game)</CardTitle>
                                 <TableContainer component={Paper}>
-                                    <Table style={{ minWidth: '650px', marginBottom: '15px', marginTop: '15px'}} size = "small" aria-label="simple table">
+                                    <Table style={{ minWidth: '650px', marginBottom: '15px', marginTop: '15px' }} size="small" aria-label="simple table">
                                         <TableHead>
                                             <TableRow>
                                                 <TableCell align="right">Year</TableCell>
@@ -383,7 +468,7 @@ class Player extends React.Component {
                 </Query>
                 <br />
                 <br />
-                <Query query={SimilarQuery} variables={{ Position: this.props.selectCurrentState.position, Targets: this.props.selectCurrentState.targets, Name: this.props.selectCurrentState.name, PER: this.props.selectCurrentState.PER, Archetype: this.props.selectCurrentState.archetype}}>
+                <Query query={SimilarQuery} variables={{ Position: this.props.selectCurrentState.position, Targets: this.props.selectCurrentState.targets, Name: this.props.selectCurrentState.name, PER: this.props.selectCurrentState.PER, Archetype: this.props.selectCurrentState.archetype }}>
                     {({ loading, error, data }) => {
                         if (loading) {
                             return <Spinner animation="border" role="status">
@@ -402,7 +487,7 @@ class Player extends React.Component {
                                 {
                                     similarPlayers.map((item) => {
                                         const colImg = item.imgFile ? require(`assets/img/${item.imgFile}`) : require('assets/img/person.jpg');
-                                        const targets = item.Target === "Once in a Generation" ? ["Once in a Generation", "All Time Great"]: [item.Target];
+                                        const targets = item.Target === "Once in a Generation" ? ["Once in a Generation", "All Time Great"] : [item.Target];
                                         return (
                                             <Col xs="12" sm={nCards} style={{ marginTop: '0px' }}>
                                                 <Card>
