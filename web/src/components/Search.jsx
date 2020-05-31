@@ -2,7 +2,7 @@ import React, { Fragment } from "react"
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import * as playerActions from '../../managers/actions';
+import * as playerActions from '../managers/actions';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 import { connect } from 'react-redux';

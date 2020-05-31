@@ -2,7 +2,7 @@ import React from "react";
 import * as playerActions from '../managers/actions';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import Search from "components/Search/Search";
+import Search from "components/Search";
 import Spinner from 'react-bootstrap/Spinner';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
