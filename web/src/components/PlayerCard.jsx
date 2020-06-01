@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-// reactstrap components
 import {
     Card,
     CardHeader,
@@ -10,8 +9,15 @@ import {
     Row,
     Col
 } from "reactstrap";
+import * as playerActions from '../managers/actions';
+import { connect } from 'react-redux';
 
 class PlayerCard extends React.Component {
+    handleOnClick(id, name, position, targets, PER, archetype) {
+        this.props.setPlayer({ id, name, position, targets, PER, archetype });
+        this.props.history.push('player');
+    }
+
     render() {
         return (
             <Row>
@@ -72,7 +78,12 @@ class PlayerCard extends React.Component {
                             </Row>
                         </CardBody>
                         <br />
-                        <br />
+                        {this.props.footer && <CardFooter>
+                            <hr />
+                            <div className="stats">
+                                <a href="javascript:void(0)" onClick={() => this.handleOnClick(this.props.playerInfo._id, this.props.playerInfo.Name, this.props.playerInfo.Position, this.props.targets, this.props.playerInfo.PER, this.props.playerInfo.Archetype)}>View more info...</a>
+                            </div>
+                        </CardFooter>}
                     </Card>
                     <br />
                 </Col>
@@ -82,9 +93,19 @@ class PlayerCard extends React.Component {
     }
 }
 
+function mapDispatchToProps(dispatch) {
+    return {
+      setPlayer: (playerObj) => dispatch(playerActions.setPlayer(playerObj)),
+    };
+  }
+
 PlayerCard.propTypes = {
     playerInfo: PropTypes.object,
-    img: PropTypes.string
+    img: PropTypes.string,
+    footer: PropTypes.bool,
+    targets: PropTypes.array,
+    history: PropTypes.object,
+    setPlayer: PropTypes.func
 };
 
-export default PlayerCard;
+export default connect(null, mapDispatchToProps)(PlayerCard);

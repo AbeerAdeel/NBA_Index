@@ -5,26 +5,13 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import PropTypes from 'prop-types';
 import * as playerSelectors from '../managers/selector';
-import * as playerActions from '../managers/actions';
-
-// reactstrap components
-import {
-    Card,
-    CardHeader,
-    CardBody,
-    CardFooter,
-    CardTitle,
-    Row,
-    Col
-} from "reactstrap";
-
-
 import Spinner from 'react-bootstrap/Spinner';
 import Search from "components/Search";
 import PlayerCard from "components/PlayerCard";
 import PlayerInfo from "components/PlayerInfo";
 import PlayerValue from "components/PlayerValue";
 import StatsTable from "components/StatsTable";
+import PlayerRec from "components/PlayerRec";
 
 const PlayerQuery = gql`
     query Player($_id: ID!) {
@@ -100,11 +87,6 @@ const SimilarQuery = gql`
 `;
 
 class Player extends React.Component {
-    handleOnClick(id, name, position, targets, PER, archetype) {
-        this.props.setPlayer({ id, name, position, targets, PER, archetype });
-        this.props.history.push('player');
-    }
-
     render() {
         return (
             <div className="content">
@@ -157,39 +139,9 @@ class Player extends React.Component {
                             </Spinner>
                         }
                         const similarPlayers = data.getSimilarPlayers;
-                        console.log(similarPlayers);
-                        const nCards = 12 / similarPlayers.length;
 
                         return (
-                            <Row>
-                                <Col xs="12">
-                                    <CardTitle tag="h5">Similar Players to {this.props.selectCurrentState.name}</CardTitle>
-                                </Col>
-                                {
-                                    similarPlayers.map((item) => {
-                                        const colImg = item.imgFile ? require(`assets/img/${item.imgFile}`) : require('assets/img/person.jpg');
-                                        const targets = item.Target === "Once in a Generation" ? ["Once in a Generation", "All Time Great"] : [item.Target];
-                                        return (
-                                            <Col xs="12" sm={nCards} style={{ marginTop: '0px' }}>
-                                                <Card>
-                                                    <CardHeader>
-                                                        <CardTitle tag="h5">{item.Name}</CardTitle>
-                                                    </CardHeader>
-                                                    <CardBody className="text-center">
-                                                        <img className="center" src={colImg} alt="Card image cap" />
-                                                    </CardBody>
-                                                    <CardFooter>
-                                                        <hr />
-                                                        <div className="stats">
-                                                            <a href="javascript:void(0)" onClick={() => this.handleOnClick(item._id, item.Name, item.Position, targets, item.PER, item.Archetype)}>View more info...</a>
-                                                        </div>
-                                                    </CardFooter>
-                                                </Card>
-                                            </Col>
-                                        )
-                                    })
-                                }
-                            </Row>
+                            <PlayerRec data={similarPlayers} name={this.props.selectCurrentState.name} history={this.props.history} />
                         )
                     }}
                 </Query>
@@ -202,14 +154,9 @@ const mapStateToProps = createStructuredSelector({
     selectCurrentState: playerSelectors.selectCurrentState(),
 });
 
-function mapDispatchToProps(dispatch) {
-    return {
-        setPlayer: (playerObj) => dispatch(playerActions.setPlayer(playerObj)),
-    };
-}
 
 Player.propTypes = {
     selectCurrentState: PropTypes.object
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Player);
+export default connect(mapStateToProps, null)(Player);

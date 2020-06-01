@@ -9,16 +9,8 @@ import { Query } from 'react-apollo';
 import * as playerSelectors from '../managers/selector';
 import { createStructuredSelector } from 'reselect';
 import Pagination from '@material-ui/lab/Pagination';
-
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  CardTitle,
-  Row,
-  Col
-} from "reactstrap";
+import PlayerCard from "components/PlayerCard";
+import { CardTitle } from "reactstrap";
 
 
 const PlayerQuery = gql`
@@ -44,15 +36,6 @@ const PlayerQuery = gql`
 
 
 class Results extends React.Component {
-  constructor() {
-    super();
-    this.handleOnClick = this.handleOnClick.bind(this);
-  }
-
-  handleOnClick(id, name, position, targets, PER, archetype) {
-    this.props.setPlayer({ id, name, position, targets, PER, archetype});
-    this.props.history.push('player');
-  }
 
   handlePagination(page) {
     this.props.setSearch({ search: this.props.selectCurrentState.search, page, skip: (page - 1) * 7 });
@@ -78,84 +61,19 @@ class Results extends React.Component {
             const title = `Search results for '${this.props.selectCurrentState.search}'`;
 
             return (
-
-              <Row>
+              <div>
                 <CardTitle tag="h5" style={{ marginLeft: '20px' }}>{title}</CardTitle>
                 {
                   searchResults.map((item) => {
                     const img = item.imgFile ? require(`assets/img/${item.imgFile}`) : require('assets/img/person.jpg');
                     const targets = item.Target === "Once in a Generation" ? ["Once in a Generation", "All Time Great"] : [item.Target];
                     return (
-                      <Col xs="12">
-                        <Card className="card-stats">
-                          <CardHeader>
-                            <CardTitle tag="h5">{item.Name}</CardTitle>
-
-                          </CardHeader>
-                          <CardBody>
-                            <Row>
-                              <Col>
-                                {<img src={img} style={{ marginLeft: '30px' }} alt="Card image cap" />}
-                              </Col>
-                              <Col style={{ margin: "auto" }}>
-                                <div className="numbers" style={{ textAlign: "center" }}>
-                                  <p className="card-category">Position</p>
-                                  <CardTitle tag="p">{item.Position}</CardTitle>
-                                  <p />
-                                </div>
-                              </Col>
-                              <Col style={{ margin: "auto" }}>
-                                <div className="numbers" style={{ textAlign: "center" }}>
-                                  <p className="card-category">PPG</p>
-                                  <CardTitle tag="p">{item.PTS}</CardTitle>
-                                  <p />
-                                </div>
-                              </Col>
-                              <Col style={{ margin: "auto" }}>
-                                <div className="numbers" style={{ textAlign: "center" }}>
-                                  <p className="card-category">RPG</p>
-                                  <CardTitle tag="p">{item.TRB}</CardTitle>
-                                  <p />
-                                </div>
-                              </Col>
-                              <Col style={{ margin: "auto" }}>
-                                <div className="numbers" style={{ textAlign: "center" }}>
-                                  <p className="card-category">APG</p>
-                                  <CardTitle tag="p">{item.AST}</CardTitle>
-                                  <p />
-                                </div>
-                              </Col>
-
-                              <Col style={{ margin: "auto" }}>
-                                <div className="numbers" style={{ textAlign: "center" }}>
-                                  <p className="card-category">PER</p>
-                                  <CardTitle tag="p">{item.PER}</CardTitle>
-                                  <p />
-                                </div>
-                              </Col>
-                              <Col style={{ margin: "auto" }}>
-                                <div className="numbers" style={{ textAlign: "center" }}>
-                                  <p className="card-category">WS</p>
-                                  <CardTitle tag="p">{item.WS}</CardTitle>
-                                  <p />
-                                </div>
-                              </Col>
-                            </Row>
-                          </CardBody>
-                          <CardFooter>
-                            <hr />
-                            <div className="stats">
-                              <a href="javascript:void(0)" onClick={() => this.handleOnClick(item._id, item.Name, item.Position, targets, item.PER, item.Archetype)}>View more info...</a>
-                            </div>
-                          </CardFooter>
-                        </Card>
-                        <br />
-                      </Col>
+                      <PlayerCard playerInfo={item} img={img} footer={true} targets={targets} history={this.props.history} />
                     )
                   })
                 }
                 <Pagination count={pages === 0 ? 1 : pages} page={this.props.selectCurrentState.page} color="primary" style={{ margin: 'auto', width: 'fit-content' }} onChange={(object, page) => this.handlePagination(page, data.getSearchResults.count)} />
-              </Row>
+              </div>
             )
           }}
         </Query>
@@ -170,14 +88,12 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch) {
   return {
-    setPlayer: (playerObj) => dispatch(playerActions.setPlayer(playerObj)),
     setSearch: (playerObj) => dispatch(playerActions.setSearch(playerObj)),
   };
 }
 
 Results.propTypes = {
   selectCurrentState: PropTypes.object,
-  setPlayer: PropTypes.func,
   setSearch: PropTypes.func,
 };
 
