@@ -13,7 +13,6 @@ import {
 } from "reactstrap";
 
 class PlayerInfo extends React.Component {
-
     generateAwards(playerInfo) {
         const awardIndex = ['MVP', 'NBAChamp', 'AS', 'AllDefensive', 'ScoringChamp', 'BLKChamp', 'ASTChamp', 'TRBChamp', 'STLChamp', 'ROY', 'DefPOY', 'MostImproved', 'SixthMan'];
         const awardCategories = ['MVP', 'NBA Champ', 'All Star', 'All Defensive', 'Scoring Champ', 'BLK Champ', 'AST Champ', 'TRB Champ', 'STL Champ', 'Rooke of the Year', 'DPOY', 'Most Improved', 'Sixth Man'];
@@ -45,16 +44,25 @@ class PlayerInfo extends React.Component {
             return "This player is consistently an All Star or a potential All Star through out his career.";
         }
         else if (target === 'Quality Starter') {
-            return "This player has been consitenlty a productive starter through his career."
+            return "This player has been consitenlty a productive starter throughout his career."
+        }
+        else if (target === 'Average Player') {
+            return "This player has been a solid contributer to his team throughout his career but nothing too flashy";
         }
         else if (target === 'Role Player') {
-            return "This player has been a solid contributer to his team throughout his career.";
+            return "This player bring solid contribution consistenly from the bench";
         }
         else if (target === 'Bench Player') {
-            return "This player has consitently been on the bench throughout his career.";
+            return "This player has consitently been on the bench throughout his career without consistent minutes.";
         }
         else if (target === 'HOF') {
             return "This player is currently in the Hall of Fame but played in an era where stats and awards were a little inflated";
+        }
+        else if (target === 'Old School Player') {
+            return "This player played in era where it is difficult to make a solid evalutation because of rule changes";
+        }
+        else if (target === 'Out of the League') {
+            return "This player had trouble making an NBA roster";
         }
         return "There hasn't been enough games in the current players career to make a current career evaluation";
     }

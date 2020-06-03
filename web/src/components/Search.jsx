@@ -38,7 +38,7 @@ class Search extends React.Component {
         const player = data.filter(x => x._id === value.id);
         console.log(player);
         if (player.length === 0) {
-            this.props.setSearch({search: value, page: 1, skip: 0});
+            this.props.setSearch({ search: value, page: 1, skip: 0 });
             this.props.history.push('search')
         }
         else {
@@ -48,7 +48,7 @@ class Search extends React.Component {
             const targets = player[0].Target === "Once in a Generation" ? ["Once in a Generation", "All Time Great"] : [player[0].Target];
             const PER = player[0].PER ? player[0].PER : 0.0;
             const archetype = player[0].Archetype;
-            this.props.setPlayer({ id, name, position, targets, PER, archetype});
+            this.props.setPlayer({ id, name, position, targets, PER, archetype });
             if (!window.location.pathname.includes('player')) {
                 this.props.history.push('player')
             }
@@ -62,6 +62,7 @@ class Search extends React.Component {
     }
 
     render() {
+        const width = this.props.width ? this.props.width : 'auto';
         return (
             <MuiThemeProvider>
                 <Query query={SearchQuery} skip={this.state.value === ""} variables={{ search: this.state.value }}>
@@ -81,6 +82,7 @@ class Search extends React.Component {
                                 renderOption={option => <Fragment>{option.Name}</Fragment>}
                                 getOptionLabel={option => option.Name}
                                 onChange={(event, value) => this.handleSubmit(event, value, data.getAllPlayers)}
+                                style={{ width }}
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
@@ -109,7 +111,8 @@ function mapDispatchToProps(dispatch) {
 
 Search.propTypes = {
     setPlayer: PropTypes.func,
-    setSerch: PropTypes.func
+    setSerch: PropTypes.func,
+    width: PropTypes.string
 };
 
 export default withRouter(connect(null, mapDispatchToProps)(Search));
