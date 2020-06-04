@@ -36,10 +36,13 @@ class Search extends React.Component {
 
     handleSubmit(event, value, data) {
         const player = data.filter(x => x._id === value.id);
-        console.log(player);
-        if (player.length === 0) {
+        if (player.length === 0 && this.props.isMultiple) {
+            console.log(value);
+        }
+        else if (player.length == 0) {
             this.props.setSearch({ search: value, page: 1, skip: 0 });
-            this.props.history.push('search')
+            this.props.history.push('search');
+            return;
         }
         else {
             const id = player[0]._id;
@@ -52,6 +55,7 @@ class Search extends React.Component {
             if (!window.location.pathname.includes('player')) {
                 this.props.history.push('player')
             }
+            return;
         }
     }
 
@@ -63,6 +67,7 @@ class Search extends React.Component {
 
     render() {
         const width = this.props.width ? this.props.width : 'auto';
+        const isMultiple = this.props.isMultiple ? this.props.isMultiple : false;
         return (
             <MuiThemeProvider>
                 <Query query={SearchQuery} skip={this.state.value === ""} variables={{ search: this.state.value }}>
@@ -77,6 +82,7 @@ class Search extends React.Component {
                             <Autocomplete
                                 disableClearable
                                 freeSolo
+                                multiple={isMultiple}
                                 id="free-solo-2-demo"
                                 options={options}
                                 renderOption={option => <Fragment>{option.Name}</Fragment>}
@@ -112,7 +118,8 @@ function mapDispatchToProps(dispatch) {
 Search.propTypes = {
     setPlayer: PropTypes.func,
     setSerch: PropTypes.func,
-    width: PropTypes.string
+    width: PropTypes.string,
+    isMultiple: PropTypes.bool
 };
 
 export default withRouter(connect(null, mapDispatchToProps)(Search));

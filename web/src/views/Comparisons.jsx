@@ -1,11 +1,11 @@
 import React from "react";
-import Card from "components/CompareCard";
+import Search from "components/Search";
 
 class Comparisons extends React.Component {
   render() {
     return (
       <div className="content">
-        <Card />
+        <Search isMultiple={true} />
       </div>
     );
   }
