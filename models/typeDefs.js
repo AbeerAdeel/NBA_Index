@@ -7,6 +7,7 @@ export const typeDefs = gql`
     getSimilarPlayers(Position: String, Targets:[String]!, Name: String!, PER: Float, Archetype: String): [Player!]!
     getPlayerStats(Name: String!): [Stat!]!
     getSearchResults(search: String!, limit: Int!, skip: Int!): Results!
+    getComparisonData(playerIds: [ID!]!): [Player!]
   }
   type Player {
     _id: ID!

@@ -37,7 +37,8 @@ class Search extends React.Component {
     handleSubmit(event, value, data) {
         const player = data.filter(x => x._id === value.id);
         if (player.length === 0 && this.props.isMultiple) {
-            console.log(value);
+            const ids = value.map(i => i.id);
+            this.props.setComparison(ids);
         }
         else if (player.length == 0) {
             this.props.setSearch({ search: value, page: 1, skip: 0 });
@@ -72,7 +73,6 @@ class Search extends React.Component {
             <MuiThemeProvider>
                 <Query query={SearchQuery} skip={this.state.value === ""} variables={{ search: this.state.value }}>
                     {({ loading, error, data }) => {
-                        const dataSource = data && data.getAllPlayers ? data.getAllPlayers.map(x => x.Name) : [];
                         const temp = data && data.getAllPlayers;
                         const options = [];
                         temp && temp.forEach((element) => {
@@ -111,7 +111,8 @@ class Search extends React.Component {
 function mapDispatchToProps(dispatch) {
     return {
         setPlayer: (playerObj) => dispatch(playerActions.setPlayer(playerObj)),
-        setSearch: (search) => dispatch(playerActions.setSearch(search))
+        setSearch: (search) => dispatch(playerActions.setSearch(search)),
+        setComparison: (playerIds) => dispatch(playerActions.setSearch(playerIds)),
     };
 }
 
@@ -119,7 +120,8 @@ Search.propTypes = {
     setPlayer: PropTypes.func,
     setSerch: PropTypes.func,
     width: PropTypes.string,
-    isMultiple: PropTypes.bool
+    isMultiple: PropTypes.bool,
+    setComparison: PropTypes.bool
 };
 
 export default withRouter(connect(null, mapDispatchToProps)(Search));

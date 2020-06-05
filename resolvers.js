@@ -55,5 +55,8 @@ export const resolvers = {
                 { $limit: 4 }
             ]);
         },
+        getComparisonData: async (_, { playerIds }) => {
+            return await Player.find( { _id : { $in : playerIds } } );
+        },
     },
 };
