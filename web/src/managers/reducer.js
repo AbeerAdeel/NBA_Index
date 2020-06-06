@@ -8,6 +8,8 @@ function reducer(state = {}, action) {
             return action.searchObj
         case actionTypes.SET_COMPARISON:
             return action.playerIds
+        case actionTypes.RESET_STATE:
+            return []
         default:
             return state;
     }

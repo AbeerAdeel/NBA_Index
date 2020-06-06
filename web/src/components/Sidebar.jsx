@@ -1,9 +1,11 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { Nav } from "reactstrap";
-// javascript plugin used to create scrollbars on windows
 import PerfectScrollbar from "perfect-scrollbar";
 import SportsBasketballIcon from '@material-ui/icons/SportsBasketball';
+import * as playerActions from '../managers/actions';
+import { connect } from 'react-redux';
+import PropTypes from "prop-types";
 
 var ps;
 
@@ -19,6 +21,7 @@ class Sidebar extends React.Component {
   activeRoute(routeName) {
     return this.props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
   }
+
   componentDidMount() {
     if (navigator.platform.indexOf("Win") > -1) {
       ps = new PerfectScrollbar(this.sidebar.current, {
@@ -27,11 +30,13 @@ class Sidebar extends React.Component {
       });
     }
   }
+
   componentWillUnmount() {
     if (navigator.platform.indexOf("Win") > -1) {
       ps.destroy();
     }
   }
+
   render() {
     return (
       <div
@@ -82,6 +87,7 @@ class Sidebar extends React.Component {
                     to={prop.layout + prop.path}
                     className="nav-link"
                     activeClassName="active"
+                    onClick={() => this.props.resetState()}
                   >
                     <i className={prop.icon} />
                     <p>{prop.name}</p>
@@ -96,4 +102,14 @@ class Sidebar extends React.Component {
   }
 }
 
-export default Sidebar;
+function mapDispatchToProps(dispatch) {
+  return {
+    resetState: () => dispatch(playerActions.resetState()),
+  };
+}
+
+Sidebar.propTypes = {
+  resetState: PropTypes.func
+};
+
+export default connect(null, mapDispatchToProps)(Sidebar);
