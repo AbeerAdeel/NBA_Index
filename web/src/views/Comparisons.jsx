@@ -24,19 +24,7 @@ const PlayerQuery = gql`
             AllNBA
             NBAChamp
             AS
-            AllDefensive
-            ScoringChamp
-            BLKChamp
-            ASTChamp
-            TRBChamp
-            STLChamp
-            SixthMan
-            ROY
-            DefPOY
-            MostImproved
             Target
-            avgSalary
-            marketValue
             isActive
         }
     }
@@ -55,6 +43,7 @@ class Comparisons extends React.Component {
                 <span className="sr-only">Loading...</span>
               </Spinner>
             }
+            console.log(data.getComparisonData);
             return (
               <CompareCard data={data.getComparisonData} />
             )

@@ -10,17 +10,47 @@ import {
 } from "reactstrap";
 
 class Footer extends React.Component {
+    getMaxObject() {
+        const fields = ["PTS", "TRB", "AST", "PER", "WS", "MVP", "AllNBA", "NBAChamp", "AS"];
+        const targetObj = { "Once in a Generation": 10, "All Time Great": 9, "HOF": 8, "All Star": 7, "Quality Starter": 6, "Average Player": 5, "Role Player": 4, "Bench Player": 3, "Out of the League": 2, "NA": 1 }
+        const maxObj = {}
+        for (const field of fields) {
+            const arr = this.props.data.map(i => i[field]);
+            maxObj[field] = arr.indexOf(Math.max(...arr));
+        }
+        const targets = this.props.data.map(i => i.Target);
+        const targetArr = targets.map(i => targetObj[i]);
+        maxObj['Target'] = targetArr.indexOf(Math.max(...targetArr));
+        return maxObj;
+    }
+
+    getField(params) {
+        let field = params.field;
+        if (field === 'AllNBA') {
+            field = 'All NBA';
+        }
+        else if (field === 'NBAChamp') {
+            field = 'NBA Champ';
+        }
+        if (params.maxObj[params.field] === params.index) {
+            return <h5 style={{ "color": "green" }}>{`${field}: ${params.value}`}</h5>
+        }
+        return <h5>{`${field}: ${params.value}`}</h5>
+    }
+
     render() {
         let nCards = 12 / this.props.data.length;
         if (nCards >= 6) {
             nCards = 4
         }
+        let index = -1;
+        const maxObj = this.getMaxObject();
         return (
             <Row>
                 {
                     this.props.data.map((item) => {
                         const colImg = item.imgFile ? require(`assets/img/${item.imgFile}`) : require('assets/img/person.jpg');
-                        const targets = item.Target === "Once in a Generation" ? ["Once in a Generation", "All Time Great"] : [item.Target];
+                        index = index + 1;
                         return (
                             <Col xs="12" sm={nCards} style={{ marginTop: '0px' }}>
                                 <Card>
@@ -31,22 +61,17 @@ class Footer extends React.Component {
                                         <img className="center" src={colImg} alt="Card image cap" />
                                         <br />
                                         <br />
-                                        <h3>PTS: {item.PTS}</h3>
-                                        <h3>AST: {item.AST}</h3>
-                                        <h3>TRB: {item.TRB}</h3>
-                                        <h3>PER: {item.PER}</h3>
-                                        <h3>WS: {item.WS}</h3>
-                                        <h3>MVP: {item.MVP ? item.MVP : 0}</h3>
-                                        <h3>AS: {item.MVP ? item.AS : 0}</h3>
-                                        <h3>All-NBA: {item.AllNBA ? item.AllNBA : 0}</h3>
-                                        <h3><b>{item.Target}</b></h3>
+                                        <this.getField index={index} maxObj={maxObj} field="PTS" value={item.PTS} />
+                                        <this.getField index={index} maxObj={maxObj} field="AST" value={item.AST} />
+                                        <this.getField index={index} maxObj={maxObj} field="TRB" value={item.TRB} />
+                                        <this.getField index={index} maxObj={maxObj} field="PER" value={item.PER} />
+                                        <this.getField index={index} maxObj={maxObj} field="WS" value={item.WS} />
+                                        <this.getField index={index} maxObj={maxObj} field="NBAChamp" value={item.NBAChamp ? item.NBAChamp : 0} />
+                                        <this.getField index={index} maxObj={maxObj} field="MVP" value={item.MVP ? item.MVP : 0} />
+                                        <this.getField index={index} maxObj={maxObj} field="AS" value={item.AS ? item.AS : 0} />
+                                        <this.getField index={index} maxObj={maxObj} field="AllNBA" value={item.AllNBA ? item.AllNBA : 0} />
+                                        <this.getField index={index} maxObj={maxObj} field="Target" value={item.Target ? item.Target : "NA"} />
                                     </CardBody>
-                                    {/* <CardFooter>
-                                        <hr />
-                                        <div className="stats">
-                                            <a href="javascript:void(0)" onClick={() => this.handleOnClick(item._id, item.Name, item.Position, targets, item.PER, item.Archetype)}>View more info...</a>
-                                        </div>
-                                    </CardFooter> */}
                                 </Card>
                             </Col>
                         )
