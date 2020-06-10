@@ -43,7 +43,6 @@ class Results extends React.Component {
   }
 
   render() {
-    console.log(this.state);
     return (
       <div className="content">
         <Search />

@@ -8,8 +8,13 @@ import {
     Row,
     Col
 } from "reactstrap";
+import * as playerActions from '../managers/actions';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import Button from '@material-ui/core/Button';
+import * as playerSelectors from '../managers/selector';
 
-class Footer extends React.Component {
+class CompareCard extends React.Component {
     getMaxObject() {
         const fields = ["PTS", "TRB", "AST", "PER", "WS", "MVP", "AllNBA", "NBAChamp", "AS"];
         const targetObj = { "Once in a Generation": 10, "All Time Great": 9, "HOF": 8, "All Star": 7, "Quality Starter": 6, "Average Player": 5, "Role Player": 4, "Bench Player": 3, "Out of the League": 2, "NA": 1 }
@@ -32,19 +37,29 @@ class Footer extends React.Component {
         else if (field === 'NBAChamp') {
             field = 'NBA Champ';
         }
+        else if (field === 'Target') {
+            field = 'Career Evaluation';
+        }
         if (params.maxObj[params.field] === params.index) {
             return <h5 style={{ "color": "green" }}>{`${field}: ${params.value}`}</h5>
         }
         return <h5>{`${field}: ${params.value}`}</h5>
     }
 
+    removePlayer(currentPlayer, data) {
+        const player = data.filter(x => x.id == currentPlayer.id)[0];
+        const index = data.indexOf(player);
+        data.splice(index, 1);
+    }
+
     render() {
-        let nCards = 12 / this.props.data.length;
+        let nCards = Math.floor(12 / this.props.data.length);
         if (nCards >= 6) {
             nCards = 4
         }
         let index = -1;
         const maxObj = this.getMaxObject();
+        const data = this.props.data;
         return (
             <Row>
                 {
@@ -82,8 +97,21 @@ class Footer extends React.Component {
     }
 }
 
-Footer.propTypes = {
-    data: PropTypes.array
+function mapDispatchToProps(dispatch) {
+    return {
+        setComparison: (playerIds) => dispatch(playerActions.setSearch(playerIds)),
+    };
+}
+
+const mapStateToProps = createStructuredSelector({
+    selectCurrentState: playerSelectors.selectCurrentState(),
+});
+
+
+CompareCard.propTypes = {
+    data: PropTypes.array,
+    selectCurrentState: PropTypes.array,
+    setComparison: PropTypes.func,
 };
 
-export default Footer;
+export default connect(mapStateToProps, mapDispatchToProps)(CompareCard);

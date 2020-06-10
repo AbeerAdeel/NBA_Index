@@ -8,6 +8,9 @@ import { Query } from 'react-apollo';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
+import { createStructuredSelector } from 'reselect';
+import * as playerSelectors from '../managers/selector';
+import Chip from '@material-ui/core/Chip';
 
 
 const SearchQuery = gql`
@@ -28,6 +31,7 @@ class Search extends React.Component {
         super();
         this.state = {
             dataSource: [],
+            action: true,
             value: "",
         }
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -35,10 +39,14 @@ class Search extends React.Component {
     }
 
     handleSubmit(event, value, data) {
+        if (!data) {
+            return;
+        }
         const player = data.filter(x => x._id === value.id);
         if (player.length === 0 && this.props.isMultiple) {
-            const ids = value.map(i => i.id);
-            this.props.setComparison(ids);
+            this.props.setComparison(value);
+            this.setState({action: false})
+            return;
         }
         else if (player.length == 0) {
             this.props.setSearch({ search: value, page: 1, skip: 0 });
@@ -60,6 +68,20 @@ class Search extends React.Component {
         }
     }
 
+    componentWillMount() {
+        this.setState({ dataSource: this.props.selectCurrentState })
+    }
+
+    handleChipDelete(option) {
+        const data = this.props.selectCurrentState;
+        console.log(data, option);
+        if (data.includes(option)) {
+            const index = data.indexOf(option);
+            data.splice(index, 1);
+        }
+        this.props.setComparison(data);
+    }
+
     _handleTextFieldChange(e) {
         this.setState({
             value: e.target.value
@@ -73,22 +95,23 @@ class Search extends React.Component {
             <MuiThemeProvider>
                 <Query query={SearchQuery} skip={this.state.value === ""} variables={{ search: this.state.value }}>
                     {({ loading, error, data }) => {
-                        const temp = data && data.getAllPlayers;
+                        const playerData = data && data.getAllPlayers;
                         const options = [];
-                        temp && temp.forEach((element) => {
+                        playerData && playerData.forEach((element) => {
                             options.push({ id: element._id, Name: element.Name });
                         });
                         return (
                             <Autocomplete
-                                disableClearable
                                 freeSolo
+                                disableClearable
                                 multiple={isMultiple}
+                                value={this.props.selectCurrentState}
                                 id="free-solo-2-demo"
+                                style={{'width': this.props.width}}
                                 options={options}
-                                renderOption={option => <Fragment>{option.Name}</Fragment>}
                                 getOptionLabel={option => option.Name}
-                                onChange={(event, value) => this.handleSubmit(event, value, data.getAllPlayers)}
-                                style={{ width }}
+                                onChange={(event, value) => this.handleSubmit(event, value, playerData)}
+                                onFocus={() => console.log('yoooo')}
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
@@ -99,6 +122,16 @@ class Search extends React.Component {
                                         onChange={this._handleTextFieldChange}
                                     />
                                 )}
+                                renderTags={(tagValue, getTagProps) =>
+                                    tagValue.map((option, index) => (
+                                      <Chip
+                                        label={option.Name}
+                                        {...getTagProps({ index })}
+                                        disabled={this.state.action}
+                                        deleteIcon={this.state.action && <div></div>}
+                                      />
+                                    ))
+                                  }
                             />
                         )
                     }}
@@ -107,6 +140,10 @@ class Search extends React.Component {
         )
     }
 }
+
+const mapStateToProps = createStructuredSelector({
+    selectCurrentState: playerSelectors.selectCurrentState(),
+});
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -121,7 +158,8 @@ Search.propTypes = {
     setSerch: PropTypes.func,
     width: PropTypes.string,
     isMultiple: PropTypes.bool,
-    setComparison: PropTypes.bool
+    setComparison: PropTypes.bool,
+    selectCurrentState: PropTypes.array
 };
 
-export default withRouter(connect(null, mapDispatchToProps)(Search));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Search));
