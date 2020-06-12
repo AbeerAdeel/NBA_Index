@@ -1,5 +1,5 @@
 import React from "react";
-import * as playerActions from '../managers/actions';
+import * as playerActions from '../managers/Players/actions';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Search from "components/Search";

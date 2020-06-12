@@ -3,12 +3,12 @@ import Search from "components/Search";
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import PropTypes from 'prop-types';
-import * as playerSelectors from '../managers/selector';
+import * as compareSelectors from '../managers/Comparisons/selector';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 import Spinner from 'react-bootstrap/Spinner';
 import CompareCard from "components/CompareCard";
-import * as playerActions from '../managers/actions';
+import * as compareActions from '../managers/Comparisons/actions';
 import Button from '@material-ui/core/Button';
 import {
   Card,
@@ -110,12 +110,12 @@ class Comparisons extends React.Component {
 }
 
 const mapStateToProps = createStructuredSelector({
-  selectCurrentState: playerSelectors.selectCurrentState(),
+  selectCurrentState: compareSelectors.selectCurrentComparison()
 });
 
 function mapDispatchToProps(dispatch) {
   return {
-    setComparison: (playerIds) => dispatch(playerActions.setSearch(playerIds)),
+    setComparison: (playerIds) => dispatch(compareActions.setComparison(playerIds)),
   };
 }
 

@@ -2,14 +2,15 @@ import React, { Fragment } from "react"
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import * as playerActions from '../managers/actions';
+import * as playerActions from '../managers/Players/actions';
+import * as comparisonActions from '../managers/Comparisons/actions';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
-import * as playerSelectors from '../managers/selector';
+import * as comparisonSelector from '../managers/Comparisons/selector';
 import Chip from '@material-ui/core/Chip';
 
 
@@ -142,14 +143,14 @@ class Search extends React.Component {
 }
 
 const mapStateToProps = createStructuredSelector({
-    selectCurrentState: playerSelectors.selectCurrentState(),
+    selectCurrentState: comparisonSelector.selectCurrentComparison(),
 });
 
 function mapDispatchToProps(dispatch) {
     return {
         setPlayer: (playerObj) => dispatch(playerActions.setPlayer(playerObj)),
         setSearch: (search) => dispatch(playerActions.setSearch(search)),
-        setComparison: (playerIds) => dispatch(playerActions.setSearch(playerIds)),
+        setComparison: (playerIds) => dispatch(comparisonActions.setComparison(playerIds)),
     };
 }
 

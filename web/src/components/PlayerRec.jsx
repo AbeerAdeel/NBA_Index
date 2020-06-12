@@ -9,7 +9,7 @@ import {
     Row,
     Col
 } from "reactstrap";
-import * as playerActions from '../managers/actions';
+import * as playerActions from '../managers/Players/actions';
 import { connect } from 'react-redux';
 
 class PlayerRec extends React.Component {

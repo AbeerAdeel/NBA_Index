@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { Nav } from "reactstrap";
 import PerfectScrollbar from "perfect-scrollbar";
 import SportsBasketballIcon from '@material-ui/icons/SportsBasketball';
-import * as playerActions from '../managers/actions';
+import * as playerActions from '../managers/Players/actions';
 import { connect } from 'react-redux';
 import PropTypes from "prop-types";
 
@@ -87,7 +87,7 @@ class Sidebar extends React.Component {
                     to={prop.layout + prop.path}
                     className="nav-link"
                     activeClassName="active"
-                    onClick={() => this.props.resetState()}
+                    // onClick={() => this.props.resetState()}
                   >
                     <i className={prop.icon} />
                     <p>{prop.name}</p>

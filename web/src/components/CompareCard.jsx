@@ -8,11 +8,9 @@ import {
     Row,
     Col
 } from "reactstrap";
-import * as playerActions from '../managers/actions';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import Button from '@material-ui/core/Button';
-import * as playerSelectors from '../managers/selector';
+import * as compareSelector from '../managers/Comparisons/selector';
 
 class CompareCard extends React.Component {
     getMaxObject() {
@@ -97,21 +95,14 @@ class CompareCard extends React.Component {
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        setComparison: (playerIds) => dispatch(playerActions.setSearch(playerIds)),
-    };
-}
-
 const mapStateToProps = createStructuredSelector({
-    selectCurrentState: playerSelectors.selectCurrentState(),
+    selectCurrentState: compareSelector.selectCurrentComparison(),
 });
 
 
 CompareCard.propTypes = {
     data: PropTypes.array,
     selectCurrentState: PropTypes.array,
-    setComparison: PropTypes.func,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CompareCard);
+export default connect(mapStateToProps, null)(CompareCard);

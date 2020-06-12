@@ -8,10 +8,6 @@ export function setSearch(searchObj) {
     return { type: actionTypes.SET_SEARCH, searchObj };
 }
 
-export function setComparison(playerIds) {
-    return { type: actionTypes.SET_COMPARISON, playerIds };
-}
-
 export function resetState() {
     return { type: actionTypes.RESET_STATE }
 }

@@ -4,7 +4,7 @@ import { Query } from 'react-apollo';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import PropTypes from 'prop-types';
-import * as playerSelectors from '../managers/selector';
+import * as playerSelectors from '../managers/Players/selector';
 import Spinner from 'react-bootstrap/Spinner';
 import Search from "components/Search";
 import PlayerCard from "components/PlayerCard";
