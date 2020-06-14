@@ -5,7 +5,7 @@ import { Route, Switch } from "react-router-dom";
 
 import Footer from "components/Footer.jsx";
 import Sidebar from "components/Sidebar.jsx";
-
+import Header from "components/Header.jsx";
 import routes from "routes.js";
 
 var ps;
@@ -53,6 +53,7 @@ class Dashboard extends React.Component {
           activeColor={this.state.activeColor}
         />
         <div className="main-panel" ref={this.mainPanel}>
+          <Header {...this.props} />
           <Switch>
             {routes.map((prop, key) => {
               return (

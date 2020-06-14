@@ -69,34 +69,84 @@ class Comparisons extends React.Component {
             }
             if (data.getComparisonData.length === 0) {
               return (
-                <>
-                  <div className="content">
-                    <Row>
-                      <Col md="12">
-                        <Card className="card-stats">
-                          <CardHeader>
-                            <CardTitle tag="h3">Welcome!</CardTitle>
-                          </CardHeader>
-                          <CardBody>
-                            <div>
-                              <p>This is an all in one basketball analytics website for inquries about player projections, classifications, etc.  You will also find here every player that has played in the NBA with their info as well as their awards for better knowledge of that player.</p>
-                              <h5>Current Features</h5>
-                              <ul>
-                                <li>Classifcation system of how good a players career was using a 94% accurate Deep Learning Tensorflow Model</li>
-                                <li>Information of every player in NBA History</li>
-                              </ul>
-                              <h5>Features to Potentialy Come</h5>
-                              <ul>
-                                <li>Stat projections for current basketball players</li>
-                                <li>Career earnings for all players</li>
-                              </ul>
-                            </div>
-                          </CardBody>
-                        </Card>
-                      </Col>
-                    </Row>
-                  </div>
-                </>
+                <div className="content">
+                  <br />
+                  <Row>
+                    <Col md="3">
+                      <Card>
+                        <CardHeader>
+                          <CardTitle tag="h5">LeBron vs MJ</CardTitle>
+                          <p className="card-category">Who is the GOAT?</p>
+                        </CardHeader>
+                        <CardBody className="text-center" style={{justifyContent: 'space-between', display : 'flex'}}>
+                          <img className="center" src={require("assets/img/jamesle01.jpg")} alt="Card image cap" />
+                          <img className="center" src={require("assets/img/jordami01.jpg")} alt="Card image cap" />
+                        </CardBody>
+                        <CardFooter>
+                          <hr />
+                          <div className="stats">
+                            <a href="javascript:void(0)" onClick={() => this.props.setComparison([{id: "5e9a51d6332e4992bcc3956c", Name: 'LeBron James'}, {id: "5e9a4680332e4992bcc38495", Name: "Michael Jordan"}])}>View Comparison</a>
+                          </div>
+                        </CardFooter>
+                      </Card>
+                    </Col>
+                    <Col md="3">
+                      <Card>
+                        <CardHeader>
+                          <CardTitle tag="h5">Bird vs Magic</CardTitle>
+                          <p className="card-category">Who dominated the 80s?</p>
+                        </CardHeader>
+                        <CardBody className="text-center" style={{justifyContent: 'space-between', display : 'flex'}}>
+                          <img className="center" src={require("assets/img/birdla01.jpg")} alt="Card image cap" />
+                          <img className="center" src={require("assets/img/johnsma02.jpg")} alt="Card image cap" />
+                        </CardBody>
+                        <CardFooter>
+                          <hr />
+                          <div className="stats">
+                            <a href="javascript:void(0)" onClick={() => this.props.setComparison([{id: "5e9a51d6332e4992bcc3956c", Name: 'Larry Bird'}, {id: "5e9a4680332e4992bcc384ae", Name: "Magic Johnson"}])}>View Comparison</a>
+                          </div>
+                        </CardFooter>
+                      </Card>
+                    </Col>
+                    <Col md="3">
+                      <Card>
+                        <CardHeader>
+                          <CardTitle tag="h5">Shaq vs Kareem</CardTitle>
+                          <p className="card-category">Who is the greatest big man?</p>
+                        </CardHeader>
+                        <CardBody className="text-center" style={{justifyContent: 'space-between', display : 'flex'}}>
+                          <img className="center" src={require("assets/img/onealsh01.jpg")} alt="Card image cap" />
+                          <img className="center" src={require("assets/img/abdulka01.jpg")} alt="Card image cap" />
+                        </CardBody>
+                        <CardFooter>
+                          <hr />
+                          <div className="stats">
+                            <a href="javascript:void(0)" onClick={() => this.props.setComparison([{id: "5e9a4680332e4992bcc38486", Name: "Shaquille O'Neal"}, {id: "5e9a4680332e4992bcc384b0", Name: "Kareem Abdul-Jabbar"}])}>View Comparison</a>
+                          </div>
+                        </CardFooter>
+                      </Card>
+                    </Col>
+                    <Col md="3">
+                      <Card>
+                        <CardHeader>
+                          <CardTitle tag="h5">Wilt vs Russell</CardTitle>
+                          <p className="card-category">Who is the best Old School Player?</p>
+                        </CardHeader>
+                        <CardBody className="text-center" style={{justifyContent: 'space-between', display : 'flex'}}>
+                          <img className="center" src={require("assets/img/chambwi01.jpg")} alt="Card image cap" />
+                          <img className="center" src={require("assets/img/russebi01.jpg")} alt="Card image cap" />
+                        </CardBody>
+                        <CardFooter>
+                          <hr />
+                          <div className="stats">
+                            <a href="javascript:void(0)" onClick={() => this.props.setComparison([{id: "5e9a4680332e4992bcc38491", Name: 'Wilt Chamberlain'}, {id: "5e9a4680332e4992bcc38515", Name: "Bill Russell"}])}>View Comparison</a>
+                          </div>
+                        </CardFooter>
+                      </Card>
+                    </Col>
+                    
+                  </Row>
+                </div>
               )
             }
             return (
