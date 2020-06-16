@@ -1,7 +1,4 @@
 import React from "react";
-// react plugin used to create charts
-import { Line, Pie } from "react-chartjs-2";
-// reactstrap components
 import {
   Card,
   CardHeader,
@@ -11,18 +8,16 @@ import {
   Row,
   Col
 } from "reactstrap";
-// core components
 
 class Info extends React.Component {
   render() {
     return (
-      <>
         <div className="content">
           <Row>
             <Col md="12">
               <Card className="card-stats">
                 <CardHeader>
-                  <CardTitle tag="h3">Welcome!</CardTitle>
+                  <CardTitle tag="h3">Info</CardTitle>
                 </CardHeader>
                 <CardBody>
                   <div>
@@ -31,19 +26,21 @@ class Info extends React.Component {
                     <ul>
                       <li>Classifcation system of how good a players career was using a 94% accurate Deep Learning Tensorflow Model</li>
                       <li>Information of every player in NBA History</li>
+                      <li>Determing if players are getting paid accordingly based off of a linear regression model.</li>
+                      <li>Ability to compare past and present players to settle hot debates.</li>
                     </ul>
                     <h5>Features to Potentialy Come</h5>
                     <ul>
                       <li>Stat projections for current basketball players</li>
-                      <li>Career earnings for all players</li>
                     </ul>
+                    <br/>
+                    <p><b>All data/images were retrieved by Basketball Reference and Kaggle. Will leave this project open source on Github if anyone has other ideas for other basketball inquires. </b> </p>
                   </div>
                 </CardBody>
               </Card>
             </Col>
           </Row>
         </div>
-      </>
     );
   }
 }
