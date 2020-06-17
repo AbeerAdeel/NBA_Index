@@ -21,7 +21,7 @@ Run this command from the root to run and compile web.
 yarn run:web
 ```
 ## Demo
-![](demo/compare.webm)
+![](demo/search.gif)
 
 
 ## Tech Stack
