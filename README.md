@@ -20,12 +20,12 @@ Run this command from the root to run and compile web.
 ```bash
 yarn run:web
 ```
-## Demo
-Main functionality demo
+
+## Main Functionality Demo
 ![](demo/search.gif)
 
-Compare players demo
-![](demo/demo.gif)
+## Compare Players Demo
+![](demo/compare.gif)
 
 
 ## Tech Stack
