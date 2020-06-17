@@ -20,6 +20,10 @@ Run this command from the root to run and compile web.
 ```bash
 yarn run:web
 ```
+## Demo
+![](demo/compare.webm)
+
+
 ## Tech Stack
 * Python
 * Tensorflow
