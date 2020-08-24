@@ -28,7 +28,6 @@
     "run:backend": "nodemon --exec babel-node index.js",
     "start": "cd web && yarn start",
     "clean:modules": "rm -rf */**/node_modules && rm -rf */node_modules && rm -rf node_modules",
-    "build": "tsc -w",
     "setup": "cd scripts && chmod +x setup.sh && ./setup.sh"
   },
   "author": "",
